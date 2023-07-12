@@ -7,16 +7,19 @@ import {
   TextInput,
   TouchableOpacity,
 } from "react-native";
-import { auth } from "../../firebase";
+import { auth, db } from "../../firebase";
 import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
 } from "firebase/auth";
+import { collection, addDoc, doc, setDoc } from "firebase/firestore";
 import { useNavigation } from "@react-navigation/native";
 
 const LoginScreen = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [username, setUsername] = useState("");
+  const [age, setAge] = useState("");
   const navigation = useNavigation();
 
   useEffect(() => {
@@ -30,21 +33,35 @@ const LoginScreen = () => {
   }, []);
 
   const handleSignup = () => {
-    auth;
     createUserWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
         const user = userCredential.user;
-        console.log("User registered:", user.email);
+        const { uid } = user;
+
+        // Set the same ID for the user document in Firestore
+        const userDocRef = doc(db, "users", uid);
+
+        // Store user data in Firestore
+        const userData = {
+          username: username,
+          age: age,
+          email: user.email,
+        };
+
+        // Set the user data in Firestore with the specified document ID
+        setDoc(userDocRef, userData)
+          .then(() => {
+            console.log("User registered:", user.email);
+          })
+          .catch((error) => {
+            console.error("Registration failed:", error);
+            alert(error.message);
+          });
       })
-      // .catch((error) => {
-      //   console.error("Registration failed:", error);
-      //   alert(error.message);
-      // });
       .catch((error) => alert(error.message));
   };
 
   const handleLogin = () => {
-    auth;
     signInWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
         const user = userCredential.user;
@@ -73,6 +90,20 @@ const LoginScreen = () => {
           onChangeText={(text) => setPassword(text)}
           style={styles.input}
           secureTextEntry
+        />
+
+        <TextInput
+          placeholder="Username"
+          value={username}
+          onChangeText={(text) => setUsername(text)}
+          style={styles.input}
+        />
+
+        <TextInput
+          placeholder="Age"
+          value={age}
+          onChangeText={(text) => setAge(text)}
+          style={styles.input}
         />
       </View>
 
