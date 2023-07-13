@@ -20,7 +20,7 @@ const RegistrationScreen = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [username, setUsername] = useState("");
-  const [age, setAge] = useState("11"); // Set default age value
+  const [age, setAge] = useState(""); // Set default age value
   const navigation = useNavigation();
 
   useEffect(() => {
@@ -44,17 +44,16 @@ const RegistrationScreen = () => {
   
         // Store user data in Firestore
         const userData = {
-            username: username,
-            age: age,
-            email: user.email,
-          };
-      
+          username: username,
+          age: age.toString(), // Store age as a string
+          email: user.email,
+        };
   
         // Set the user data in Firestore with the specified document ID
         setDoc(userDocRef, userData)
           .then(() => {
             console.log("User registered:", user.email);
-            navigation.navigate("Profile"); 
+            navigation.navigate("Profile");
           })
           .catch((error) => {
             console.error("Registration failed:", error);
@@ -64,19 +63,6 @@ const RegistrationScreen = () => {
       .catch((error) => alert(error.message));
   };
   
-
-//   const handleLogin = () => {
-//     signInWithEmailAndPassword(auth, email, password)
-//       .then((userCredential) => {
-//         const user = userCredential.user;
-//         console.log("Logged in with:", user.email);
-//         navigation.navigate("Profile");
-//       })
-//       .catch((error) => {
-//         console.error("Login failed:", error);
-//         alert(error.message);
-//       });
-//   };
 
 return (
     <KeyboardAvoidingView style={styles.container} behavior="padding">
@@ -103,15 +89,15 @@ return (
           style={styles.input}
         />
 
-        <Picker
-          selectedValue={age}
-          onValueChange={(itemValue) => setAge(itemValue)}
-          style={styles.input}
-        >
-          <Picker.Item label="11" value="11" />
-          <Picker.Item label="22" value="22" />
-          <Picker.Item label="33" value="33" />
-        </Picker>
+<Picker
+  selectedValue={age}
+  onValueChange={(itemValue) => setAge(itemValue)}
+  style={styles.input}
+>
+  <Picker.Item label="GMT" value="GMT" />
+  <Picker.Item label="PST" value="PST" />
+  <Picker.Item label="EST" value="EST" />
+</Picker>
       </View>
 
       <View style={styles.buttonContainer}>

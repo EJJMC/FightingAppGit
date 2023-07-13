@@ -11,22 +11,34 @@ const ProfileScreen = () => {
     const fetchUserData = async () => {
       // Get the authenticated user's ID
       const userId = auth.currentUser.uid;
-
+    
       // Get the user document from Firestore
       const userDocRef = doc(db, "users", userId);
       const userDocSnapshot = await getDoc(userDocRef);
-
+    
       if (userDocSnapshot.exists()) {
         // Retrieve the user data from the document
         const userData = userDocSnapshot.data();
         setUsername(userData.username);
-        setAge(userData.age);
+    
+        // Map the age value to display GMT, PST, or EST
+        const ageValueMap = {
+          GMT: "Greenwich Mean Time",
+          PST: "Pacific Standard Time",
+          EST: "Eastern Standard Time",
+        };
+    
+        // Set the age label based on the age value
+        const ageLabel = ageValueMap[userData.age] || "";
+    
+        setAge(ageLabel);
       }
     };
-
+    
+  
     fetchUserData();
   }, []);
-
+  
   return (
     <View style={styles.container}>
       <Text style={styles.label}>Username:</Text>
