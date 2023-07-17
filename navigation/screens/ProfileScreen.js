@@ -13,6 +13,8 @@ import { collection, getDocs } from "firebase/firestore";
 const ProfileScreen = () => {
   const [users, setUsers] = useState([]);
   const [selectedCharacter, setSelectedCharacter] = useState("");
+  const [selectedTimezone, setSelectedTimezone] = useState("");
+  const [selectedGoal, setSelectedGoal] = useState("");
 
   useEffect(() => {
     const fetchUsersData = async () => {
@@ -48,30 +50,59 @@ const ProfileScreen = () => {
     );
   };
 
-  // Function to filter users based on the selected character
-  const filterUsers = (character) => {
-    if (!character) {
-      return users; // Return all users when no character is selected
-    } else {
-      return users.filter((user) => user.name === character);
-    }
+  // Function to filter users based on the selected character, timezone, and goal
+  const filterUsers = () => {
+    return users.filter((user) => {
+      const nameMatch = !selectedCharacter || user.name === selectedCharacter;
+      const timezoneMatch =
+        !selectedTimezone || user.timezone === selectedTimezone;
+      const goalMatch = !selectedGoal || user.goal === selectedGoal;
+      return nameMatch && timezoneMatch && goalMatch;
+    });
   };
 
-  const filteredUsers = filterUsers(selectedCharacter);
+  const filteredUsers = filterUsers();
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* Filter dropdown */}
-      <Picker
-        selectedValue={selectedCharacter}
-        onValueChange={(itemValue) => setSelectedCharacter(itemValue)}
-        style={styles.picker}
-      >
-        <Picker.Item label="All Users" value="" />
-        <Picker.Item label="Ryu" value="Ryu" />
-        <Picker.Item label="Ken" value="Ken" />
-        <Picker.Item label="Juri" value="Juri" />
-      </Picker>
+      {/* Filter dropdowns */}
+      <View style={styles.filterContainer}>
+        <Picker
+          selectedValue={selectedCharacter}
+          onValueChange={(itemValue) => setSelectedCharacter(itemValue)}
+          style={styles.picker}
+        >
+          <Picker.Item label="All Characters" value="" />
+          <Picker.Item label="Ryu" value="Ryu" />
+          <Picker.Item label="Ken" value="Ken" />
+          <Picker.Item label="Juri" value="Juri" />
+        </Picker>
+
+        <Picker
+          selectedValue={selectedTimezone}
+          onValueChange={(itemValue) => setSelectedTimezone(itemValue)}
+          style={styles.picker}
+        >
+          <Picker.Item label="All Timezones" value="" />
+          <Picker.Item label="PST" value="PST" />
+          <Picker.Item label="GMT" value="GMT" />
+          <Picker.Item label="EST" value="EST" />
+        </Picker>
+
+        <Picker
+          selectedValue={selectedGoal}
+          onValueChange={(itemValue) => setSelectedGoal(itemValue)}
+          style={styles.picker}
+        >
+          <Picker.Item label="All Goals" value="" />
+          <Picker.Item label="Casual Set" value="Casual Set" />
+          <Picker.Item
+            label="Tournament Practice"
+            value="Tournament Practice"
+          />
+          <Picker.Item label="Matchup Experience" value="Matchup Experience" />
+        </Picker>
+      </View>
 
       <View style={styles.tableHeader}>
         <Text style={styles.headerCell}>Name</Text>
@@ -95,8 +126,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingTop: 8,
   },
-  picker: {
+  filterContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
     marginBottom: 10,
+  },
+  picker: {
+    flex: 1,
+    marginRight: 5,
   },
   tableHeader: {
     flexDirection: "row",
