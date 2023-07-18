@@ -6,15 +6,21 @@ import {
   FlatList,
   SafeAreaView,
   Picker,
+  TouchableOpacity,
 } from "react-native";
 import { db } from "../../firebase";
 import { collection, getDocs } from "firebase/firestore";
 
-const ProfileScreen = () => {
+const ProfileScreen = (navigation) => {
   const [users, setUsers] = useState([]);
   const [selectedCharacter, setSelectedCharacter] = useState("");
   const [selectedTimezone, setSelectedTimezone] = useState("");
   const [selectedGoal, setSelectedGoal] = useState("");
+  const [showResults, setShowResults] = useState(false);
+
+  const handleUserSelection = (user) => {
+    navigation.navigate("DetailScreen", { user });
+  };
 
   useEffect(() => {
     const fetchUsersData = async () => {
@@ -40,13 +46,15 @@ const ProfileScreen = () => {
   // Function to render each row in the table
   const renderItem = ({ item }) => {
     return (
-      <View style={styles.row}>
+      <TouchableOpacity
+        onPress={() => handleUserSelection(item)}
+        style={styles.row}
+      >
         <Text style={styles.cell}>{item.name}</Text>
         <Text style={styles.cell}>{item.timezone}</Text>
         <Text style={styles.cell}>{item.goal}</Text>
         <Text style={styles.cell}>{item.username}</Text>
-        {/* Add more columns for other fields as needed */}
-      </View>
+      </TouchableOpacity>
     );
   };
 
@@ -61,7 +69,14 @@ const ProfileScreen = () => {
     });
   };
 
-  const filteredUsers = filterUsers();
+  const filteredUsers = showResults ? filterUsers() : [];
+
+  const handleReset = () => {
+    setSelectedCharacter("");
+    setSelectedTimezone("");
+    setSelectedGoal("");
+    setShowResults(false);
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -104,18 +119,32 @@ const ProfileScreen = () => {
         </Picker>
       </View>
 
-      <View style={styles.tableHeader}>
-        <Text style={styles.headerCell}>Name</Text>
-        <Text style={styles.headerCell}>Timezone</Text>
-        <Text style={styles.headerCell}>Goal</Text>
-        <Text style={styles.headerCell}>Username</Text>
-        {/* Add more headers for other fields as needed */}
-      </View>
-      <FlatList
-        data={filteredUsers}
-        renderItem={renderItem}
-        keyExtractor={(item) => item.email} // You can use a unique identifier as the key
-      />
+      <TouchableOpacity
+        onPress={() => setShowResults(true)}
+        style={styles.button}
+      >
+        <Text style={styles.buttonText}>Show Results</Text>
+      </TouchableOpacity>
+
+      {showResults && (
+        <View>
+          <TouchableOpacity onPress={handleReset} style={styles.button}>
+            <Text style={styles.buttonText}>Reset</Text>
+          </TouchableOpacity>
+          <View style={styles.tableHeader}>
+            <Text style={styles.headerCell}>Name</Text>
+            <Text style={styles.headerCell}>Timezone</Text>
+            <Text style={styles.headerCell}>Goal</Text>
+            <Text style={styles.headerCell}>Username</Text>
+            {/* Add more headers for other fields as needed */}
+          </View>
+          <FlatList
+            data={filteredUsers}
+            renderItem={renderItem}
+            keyExtractor={(item) => item.email} // You can use a unique identifier as the key
+          />
+        </View>
+      )}
     </SafeAreaView>
   );
 };
@@ -134,6 +163,19 @@ const styles = StyleSheet.create({
   picker: {
     flex: 1,
     marginRight: 5,
+  },
+  button: {
+    backgroundColor: "#0782F9",
+    width: "100%",
+    padding: 15,
+    borderRadius: 10,
+    marginTop: 10,
+  },
+  buttonText: {
+    color: "white",
+    fontWeight: "700",
+    fontSize: 16,
+    textAlign: "center",
   },
   tableHeader: {
     flexDirection: "row",
