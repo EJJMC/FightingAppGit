@@ -11,16 +11,12 @@ import {
 import { db } from "../../firebase";
 import { collection, getDocs } from "firebase/firestore";
 
-const ProfileScreen = (navigation) => {
+const ProfileScreen = ({ navigation }) => {
   const [users, setUsers] = useState([]);
   const [selectedCharacter, setSelectedCharacter] = useState("");
   const [selectedTimezone, setSelectedTimezone] = useState("");
   const [selectedGoal, setSelectedGoal] = useState("");
   const [showResults, setShowResults] = useState(false);
-
-  const handleUserSelection = (user) => {
-    navigation.navigate("DetailScreen", { user });
-  };
 
   useEffect(() => {
     const fetchUsersData = async () => {
@@ -76,6 +72,10 @@ const ProfileScreen = (navigation) => {
     setSelectedTimezone("");
     setSelectedGoal("");
     setShowResults(false);
+  };
+
+  const handleUserSelection = (user) => {
+    navigation.navigate("Results", { user });
   };
 
   return (

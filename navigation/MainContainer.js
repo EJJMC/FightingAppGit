@@ -13,6 +13,7 @@ import ProfileScreen from "./screens/ProfileScreen";
 import MessageScreen from "./screens/MessageScreen";
 import LoginScreen from "./screens/LoginScreen";
 import RegistrationScreen from "./screens/RegistrationScreen";
+import ResultsScreen from "./screens/ResultsScreen";
 
 // Screen Names
 const homeName = "Home";
@@ -22,6 +23,7 @@ const profileName = "Profile";
 const messageName = "Message";
 const loginName = "Login";
 const RegName = "Registration";
+const resultsName = "Results";
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -40,6 +42,7 @@ export default function MainContainer() {
         <Stack.Screen name={profileName} component={ProfileScreen} />
         <Stack.Screen name={loginName} component={LoginScreen} />
         <Stack.Screen name={RegName} component={RegistrationScreen} />
+        <Stack.Screen name={resultsName} component={ResultsScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
