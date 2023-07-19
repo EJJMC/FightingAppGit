@@ -8,26 +8,25 @@ import {
   Picker,
   TouchableOpacity,
 } from "react-native";
-import { db } from "../../firebase";
+import { db, auth } from "../../firebase"; // Import the 'auth' object from firebase.js
 import { collection, getDocs } from "firebase/firestore";
+import { useNavigation } from "@react-navigation/native";
 
-const ProfileScreen = ({ navigation }) => {
+const ProfileScreen = () => {
   const [users, setUsers] = useState([]);
   const [selectedCharacter, setSelectedCharacter] = useState("");
   const [selectedTimezone, setSelectedTimezone] = useState("");
   const [selectedGoal, setSelectedGoal] = useState("");
   const [showResults, setShowResults] = useState(false);
+  const [loggedInUserEmail, setLoggedInUserEmail] = useState("");
+
+  const navigation = useNavigation();
 
   useEffect(() => {
     const fetchUsersData = async () => {
       try {
-        // Get the collection reference for "users"
         const usersRef = collection(db, "users");
-
-        // Fetch all documents from the collection
         const snapshot = await getDocs(usersRef);
-
-        // Extract data from the documents and convert to an array
         const usersData = snapshot.docs.map((doc) => doc.data());
 
         setUsers(usersData);
@@ -39,7 +38,40 @@ const ProfileScreen = ({ navigation }) => {
     fetchUsersData();
   }, []);
 
-  // Function to render each row in the table
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      if (user) {
+        setLoggedInUserEmail(user.email);
+      }
+    });
+
+    return unsubscribe;
+  }, []);
+
+  const handleUserSelection = (user) => {
+    navigation.navigate("Results", { user });
+  };
+
+  const filterUsers = () => {
+    return users.filter((user) => {
+      const isNotLoggedInUser = user.email !== loggedInUserEmail;
+      const nameMatch = !selectedCharacter || user.name === selectedCharacter;
+      const timezoneMatch =
+        !selectedTimezone || user.timezone === selectedTimezone;
+      const goalMatch = !selectedGoal || user.goal === selectedGoal;
+      return nameMatch && timezoneMatch && goalMatch && isNotLoggedInUser;
+    });
+  };
+
+  const filteredUsers = showResults ? filterUsers() : [];
+
+  const handleReset = () => {
+    setSelectedCharacter("");
+    setSelectedTimezone("");
+    setSelectedGoal("");
+    setShowResults(false);
+  };
+
   const renderItem = ({ item }) => {
     return (
       <TouchableOpacity
@@ -54,33 +86,8 @@ const ProfileScreen = ({ navigation }) => {
     );
   };
 
-  // Function to filter users based on the selected character, timezone, and goal
-  const filterUsers = () => {
-    return users.filter((user) => {
-      const nameMatch = !selectedCharacter || user.name === selectedCharacter;
-      const timezoneMatch =
-        !selectedTimezone || user.timezone === selectedTimezone;
-      const goalMatch = !selectedGoal || user.goal === selectedGoal;
-      return nameMatch && timezoneMatch && goalMatch;
-    });
-  };
-
-  const filteredUsers = showResults ? filterUsers() : [];
-
-  const handleReset = () => {
-    setSelectedCharacter("");
-    setSelectedTimezone("");
-    setSelectedGoal("");
-    setShowResults(false);
-  };
-
-  const handleUserSelection = (user) => {
-    navigation.navigate("Results", { user });
-  };
-
   return (
     <SafeAreaView style={styles.container}>
-      {/* Filter dropdowns */}
       <View style={styles.filterContainer}>
         <Picker
           selectedValue={selectedCharacter}
@@ -136,12 +143,11 @@ const ProfileScreen = ({ navigation }) => {
             <Text style={styles.headerCell}>Timezone</Text>
             <Text style={styles.headerCell}>Goal</Text>
             <Text style={styles.headerCell}>Username</Text>
-            {/* Add more headers for other fields as needed */}
           </View>
           <FlatList
             data={filteredUsers}
             renderItem={renderItem}
-            keyExtractor={(item) => item.email} // You can use a unique identifier as the key
+            keyExtractor={(item) => item.email}
           />
         </View>
       )}

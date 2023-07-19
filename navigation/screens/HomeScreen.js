@@ -21,13 +21,28 @@ import {
   ImageBackground,
   StyleSheet,
   ScrollView,
+  TouchableOpacity,
 } from "react-native";
 import React from "react";
 import bgImage from "../../assets/blue.png";
-
+import { auth } from "../../firebase";
+import { signOut } from "firebase/auth";
 import NewsList from "./NewsList";
 
 const HomeScreen = () => {
+  const handleLogout = () => {
+    // Call the signOut function to log the user out
+    signOut(auth)
+      .then(() => {
+        // Logout successful
+        console.log("User logged out successfully.");
+      })
+      .catch((error) => {
+        // Handle logout error
+        console.error("Logout failed:", error);
+      });
+  };
+
   return (
     <ImageBackground source={bgImage} style={styles.container}>
       <ScrollView contentContainerStyle={styles.contentContainer}>
@@ -40,6 +55,11 @@ const HomeScreen = () => {
 
         {/* Display the NewsList component */}
         <NewsList />
+
+        {/* Add the logout button */}
+        <TouchableOpacity onPress={handleLogout} style={styles.button}>
+          <Text style={styles.buttonText}>Logout</Text>
+        </TouchableOpacity>
       </ScrollView>
     </ImageBackground>
   );
@@ -61,6 +81,19 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: "#fff",
     marginBottom: 16,
+  },
+  button: {
+    backgroundColor: "#0782F9",
+    width: "60%",
+    padding: 15,
+    borderRadius: 10,
+    marginTop: 20,
+  },
+  buttonText: {
+    color: "white",
+    fontWeight: "700",
+    fontSize: 16,
+    textAlign: "center",
   },
 });
 

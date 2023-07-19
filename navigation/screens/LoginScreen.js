@@ -1,4 +1,3 @@
-// Import the necessary modules
 import React, { useEffect, useState } from "react";
 import {
   KeyboardAvoidingView,
@@ -21,14 +20,13 @@ import bgImage from "../../assets/blue.png";
 const LoginScreen = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [username, setUsername] = useState("");
-  const [age, setAge] = useState("");
   const navigation = useNavigation();
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
       if (user) {
-        navigation.navigate("profileName");
+        setEmail(user.email); // Set the logged-in user's email in the state
+        navigation.navigate("Home");
       }
     });
 
@@ -70,7 +68,11 @@ const LoginScreen = () => {
       .then((userCredential) => {
         const user = userCredential.user;
         console.log("Logged in with:", user.email);
-        navigation.navigate("Profile");
+
+        // Store the logged-in user's email in the state
+        setEmail(user.email);
+
+        navigation.navigate("Home");
       })
       .catch((error) => {
         console.error("Login failed:", error);
@@ -85,24 +87,24 @@ const LoginScreen = () => {
 
   return (
     <ImageBackground source={bgImage} style={styles.container}>
-    <KeyboardAvoidingView style={styles.container} behavior="padding">
-      <View style={styles.inputContainer}>
-        <TextInput
-          placeholder="Email"
-          value={email}
-          onChangeText={(text) => setEmail(text)}
-          style={styles.input}
-        />
+      <KeyboardAvoidingView style={styles.container} behavior="padding">
+        <View style={styles.inputContainer}>
+          <TextInput
+            placeholder="Email"
+            value={email}
+            onChangeText={(text) => setEmail(text)}
+            style={styles.input}
+          />
 
-        <TextInput
-          placeholder="Password"
-          value={password}
-          onChangeText={(text) => setPassword(text)}
-          style={styles.input}
-          secureTextEntry
-        />
+          <TextInput
+            placeholder="Password"
+            value={password}
+            onChangeText={(text) => setPassword(text)}
+            style={styles.input}
+            secureTextEntry
+          />
 
-        {/* <TextInput
+          {/* <TextInput
           placeholder="Username"
           value={username}
           onChangeText={(text) => setUsername(text)}
@@ -115,25 +117,24 @@ const LoginScreen = () => {
           onChangeText={(text) => setAge(text)}
           style={styles.input}
         /> */}
-      </View>
+        </View>
 
-      <View style={styles.buttonContainer}>
-        <TouchableOpacity onPress={handleLogin} style={styles.button}>
-          <Text style={styles.buttonText}>Login</Text>
-        </TouchableOpacity>
+        <View style={styles.buttonContainer}>
+          <TouchableOpacity onPress={handleLogin} style={styles.button}>
+            <Text style={styles.buttonText}>Login</Text>
+          </TouchableOpacity>
 
-        <TouchableOpacity
-          onPress={handleRegistration} // Call the handleRegistration function
-          style={[styles.button, styles.buttonOutline]}
-        >
-          <Text style={styles.buttonOutlineText}>Register</Text>
-        </TouchableOpacity>
-      </View>
-    </KeyboardAvoidingView>
+          <TouchableOpacity
+            onPress={handleRegistration} // Call the handleRegistration function
+            style={[styles.button, styles.buttonOutline]}
+          >
+            <Text style={styles.buttonOutlineText}>Register</Text>
+          </TouchableOpacity>
+        </View>
+      </KeyboardAvoidingView>
     </ImageBackground>
   );
 };
-
 
 export default LoginScreen;
 

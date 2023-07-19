@@ -73,7 +73,7 @@ function CustomTabBarBackground({ state, descriptors, navigation }) {
             iconName = isFocused ? "home" : "home-outline";
           } else if (route.name === detailsName) {
             iconName = isFocused ? "list" : "list-outline";
-          } else if (route.name === loginName) {
+          } else if (route.name === profileName) {
             iconName = isFocused ? "settings" : "settings-outline";
           }
 
@@ -105,12 +105,13 @@ function CustomTabBarBackground({ state, descriptors, navigation }) {
 function TabNavigator() {
   return (
     <Tab.Navigator
-      initialRouteName={homeName}
+      initialRouteName={loginName}
       tabBar={(props) => <CustomTabBarBackground {...props} />}
     >
       <Tab.Screen name={homeName} component={HomeScreen} />
       <Tab.Screen name={detailsName} component={DetailsScreen} />
       <Tab.Screen name={loginName} component={LoginScreen} />
+      <Tab.Screen name={profileName} component={ProfileScreen} />
     </Tab.Navigator>
   );
 }

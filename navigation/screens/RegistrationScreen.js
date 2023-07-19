@@ -44,7 +44,7 @@ const RegistrationScreen = () => {
         setDoc(userDocRef, userData)
           .then(() => {
             console.log("User registered:", user.email);
-            navigation.navigate("Profile");
+            navigation.navigate("Home");
           })
           .catch((error) => {
             console.error("Registration failed:", error);
