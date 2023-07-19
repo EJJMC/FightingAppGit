@@ -7,10 +7,12 @@ import {
   SafeAreaView,
   Picker,
   TouchableOpacity,
+  ImageBackground,
 } from "react-native";
 import { db, auth } from "../../firebase"; // Import the 'auth' object from firebase.js
 import { collection, getDocs } from "firebase/firestore";
 import { useNavigation } from "@react-navigation/native";
+import bgImage from "../../assets/purple.png";
 
 const ProfileScreen = () => {
   const [users, setUsers] = useState([]);
@@ -87,71 +89,76 @@ const ProfileScreen = () => {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.filterContainer}>
-        <Picker
-          selectedValue={selectedCharacter}
-          onValueChange={(itemValue) => setSelectedCharacter(itemValue)}
-          style={styles.picker}
-        >
-          <Picker.Item label="All Characters" value="" />
-          <Picker.Item label="Ryu" value="Ryu" />
-          <Picker.Item label="Ken" value="Ken" />
-          <Picker.Item label="Juri" value="Juri" />
-        </Picker>
+    <ImageBackground source={bgImage} style={styles.container}>
+      <SafeAreaView style={styles.container}>
+        <View style={styles.filterContainer}>
+          <Picker
+            selectedValue={selectedCharacter}
+            onValueChange={(itemValue) => setSelectedCharacter(itemValue)}
+            style={styles.picker}
+          >
+            <Picker.Item label="All Characters" value="" />
+            <Picker.Item label="Ryu" value="Ryu" />
+            <Picker.Item label="Ken" value="Ken" />
+            <Picker.Item label="Juri" value="Juri" />
+          </Picker>
 
-        <Picker
-          selectedValue={selectedTimezone}
-          onValueChange={(itemValue) => setSelectedTimezone(itemValue)}
-          style={styles.picker}
-        >
-          <Picker.Item label="All Timezones" value="" />
-          <Picker.Item label="PST" value="PST" />
-          <Picker.Item label="GMT" value="GMT" />
-          <Picker.Item label="EST" value="EST" />
-        </Picker>
+          <Picker
+            selectedValue={selectedTimezone}
+            onValueChange={(itemValue) => setSelectedTimezone(itemValue)}
+            style={styles.picker}
+          >
+            <Picker.Item label="All Timezones" value="" />
+            <Picker.Item label="PST" value="PST" />
+            <Picker.Item label="GMT" value="GMT" />
+            <Picker.Item label="EST" value="EST" />
+          </Picker>
 
-        <Picker
-          selectedValue={selectedGoal}
-          onValueChange={(itemValue) => setSelectedGoal(itemValue)}
-          style={styles.picker}
-        >
-          <Picker.Item label="All Goals" value="" />
-          <Picker.Item label="Casual Set" value="Casual Set" />
-          <Picker.Item
-            label="Tournament Practice"
-            value="Tournament Practice"
-          />
-          <Picker.Item label="Matchup Experience" value="Matchup Experience" />
-        </Picker>
-      </View>
-
-      <TouchableOpacity
-        onPress={() => setShowResults(true)}
-        style={styles.button}
-      >
-        <Text style={styles.buttonText}>Show Results</Text>
-      </TouchableOpacity>
-
-      {showResults && (
-        <View>
-          <TouchableOpacity onPress={handleReset} style={styles.button}>
-            <Text style={styles.buttonText}>Reset</Text>
-          </TouchableOpacity>
-          <View style={styles.tableHeader}>
-            <Text style={styles.headerCell}>Name</Text>
-            <Text style={styles.headerCell}>Timezone</Text>
-            <Text style={styles.headerCell}>Goal</Text>
-            <Text style={styles.headerCell}>Username</Text>
-          </View>
-          <FlatList
-            data={filteredUsers}
-            renderItem={renderItem}
-            keyExtractor={(item) => item.email}
-          />
+          <Picker
+            selectedValue={selectedGoal}
+            onValueChange={(itemValue) => setSelectedGoal(itemValue)}
+            style={styles.picker}
+          >
+            <Picker.Item label="All Goals" value="" />
+            <Picker.Item label="Casual Set" value="Casual Set" />
+            <Picker.Item
+              label="Tournament Practice"
+              value="Tournament Practice"
+            />
+            <Picker.Item
+              label="Matchup Experience"
+              value="Matchup Experience"
+            />
+          </Picker>
         </View>
-      )}
-    </SafeAreaView>
+
+        <TouchableOpacity
+          onPress={() => setShowResults(true)}
+          style={styles.button}
+        >
+          <Text style={styles.buttonText}>Show Results</Text>
+        </TouchableOpacity>
+
+        {showResults && (
+          <View>
+            <TouchableOpacity onPress={handleReset} style={styles.button}>
+              <Text style={styles.buttonText}>Reset</Text>
+            </TouchableOpacity>
+            <View style={styles.tableHeader}>
+              <Text style={styles.headerCell}>Name</Text>
+              <Text style={styles.headerCell}>Timezone</Text>
+              <Text style={styles.headerCell}>Goal</Text>
+              <Text style={styles.headerCell}>Username</Text>
+            </View>
+            <FlatList
+              data={filteredUsers}
+              renderItem={renderItem}
+              keyExtractor={(item) => item.email}
+            />
+          </View>
+        )}
+      </SafeAreaView>
+    </ImageBackground>
   );
 };
 
@@ -202,6 +209,7 @@ const styles = StyleSheet.create({
   cell: {
     flex: 1,
     textAlign: "center",
+    color: "white",
   },
 });
 

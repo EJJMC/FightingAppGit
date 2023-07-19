@@ -1,11 +1,15 @@
-import { View, Text } from "react-native";
 import React from "react";
+import { View, Text } from "react-native";
+import { Card } from "react-native-paper";
 
 const DetailsScreen = () => {
   return (
-    <View>
-      <Text>DetailsScreen</Text>
-    </View>
+    <Card>
+      <Card.Title title="DetailsScreen" />
+      <Card.Content>
+        <Text>Card content goes here</Text>
+      </Card.Content>
+    </Card>
   );
 };
 

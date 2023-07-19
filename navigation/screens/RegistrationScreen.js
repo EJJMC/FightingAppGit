@@ -72,6 +72,8 @@ const RegistrationScreen = () => {
           secureTextEntry
         />
 
+        <Text style={styles.title}>Choose a Main Character</Text>
+
         <Picker
           selectedValue={selectedName}
           onValueChange={(itemValue) => setSelectedName(itemValue)}
@@ -82,6 +84,7 @@ const RegistrationScreen = () => {
           <Picker.Item label="Juri" value="Juri" />
         </Picker>
 
+        <Text style={styles.title}>Choose a Timezone</Text>
         <Picker
           selectedValue={selectedTimezone}
           onValueChange={(itemValue) => setSelectedTimezone(itemValue)}
@@ -91,7 +94,7 @@ const RegistrationScreen = () => {
           <Picker.Item label="GMT" value="GMT" />
           <Picker.Item label="EST" value="EST" />
         </Picker>
-
+        <Text style={styles.title}>What are your Goals</Text>
         <Picker
           selectedValue={selectedGoal}
           onValueChange={(itemValue) => setSelectedGoal(itemValue)}
