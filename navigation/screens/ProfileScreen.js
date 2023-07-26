@@ -5,7 +5,6 @@ import {
   StyleSheet,
   FlatList,
   SafeAreaView,
-  Picker,
   TouchableOpacity,
   ImageBackground,
 } from "react-native";
@@ -13,6 +12,7 @@ import { db, auth } from "../../firebase"; // Import the 'auth' object from fire
 import { collection, getDocs } from "firebase/firestore";
 import { useNavigation } from "@react-navigation/native";
 import bgImage from "../../assets/purple.png";
+import { Picker } from "@react-native-picker/picker";
 
 const ProfileScreen = () => {
   const [users, setUsers] = useState([]);
