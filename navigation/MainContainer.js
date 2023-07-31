@@ -1,7 +1,13 @@
 import * as React from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { Image, View, StyleSheet, Dimensions } from "react-native";
+import {
+  Image,
+  View,
+  StyleSheet,
+  Dimensions,
+  TouchableOpacity,
+} from "react-native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { Ionicons } from "@expo/vector-icons";
 
@@ -27,6 +33,32 @@ const resultsName = "Results";
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
+
+const CustomHeader = ({ navigation, routeName }) => {
+  return (
+    <View style={{ flexDirection: "row", marginRight: 10 }}>
+      {routeName === resultsName && (
+        <TouchableOpacity
+          onPress={() => {
+            // Handle icon press here for the "Results" screen
+            // For example, you can do something specific for the "Results" screen
+            console.log("Results icon pressed!");
+          }}
+        >
+          <Ionicons name="star-outline" size={24} color="#000000" />
+        </TouchableOpacity>
+      )}
+      <TouchableOpacity
+        onPress={() => {
+          // Handle icon press here for the common icon (e.g., settings)
+          navigation.navigate("Home");
+        }}
+      >
+        <Ionicons name="settings-outline" size={24} color="#000000" />
+      </TouchableOpacity>
+    </View>
+  );
+};
 
 export default function MainContainer() {
   return (
@@ -102,16 +134,60 @@ function CustomTabBarBackground({ state, descriptors, navigation }) {
   );
 }
 
-function TabNavigator() {
+function TabNavigator({ navigation, route }) {
+  const currentRouteName = route.state
+    ? route.state.routes[route.state.index].name
+    : "";
+
   return (
     <Tab.Navigator
       initialRouteName={loginName}
       tabBar={(props) => <CustomTabBarBackground {...props} />}
     >
-      <Tab.Screen name={homeName} component={HomeScreen} />
-      <Tab.Screen name={detailsName} component={DetailsScreen} />
-      <Tab.Screen name={loginName} component={LoginScreen} />
-      <Tab.Screen name={profileName} component={ProfileScreen} />
+      <Tab.Screen
+        name={homeName}
+        component={HomeScreen}
+        options={{
+          headerShown: true,
+          headerTitle: "cooking with gas",
+          headerRight: () => (
+            <CustomHeader
+              navigation={navigation}
+              routeName={currentRouteName}
+            />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name={detailsName}
+        component={DetailsScreen}
+        options={{
+          headerShown: true,
+          headerTitle: "cooking with gas",
+          headerRight: () => (
+            <CustomHeader
+              navigation={navigation}
+              routeName={currentRouteName}
+            />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name={loginName}
+        component={LoginScreen}
+        options={{ headerShown: false }}
+      />
+      <Tab.Screen
+        name={profileName}
+        component={ProfileScreen}
+        options={{ headerShown: false }}
+      />
+
+      <Tab.Screen
+        name={resultsName}
+        component={ResultsScreen}
+        options={{ headerShown: false }}
+      />
     </Tab.Navigator>
   );
 }
