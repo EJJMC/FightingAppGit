@@ -3,25 +3,33 @@ import {
   View,
   Text,
   FlatList,
-  StyleSheet,
   TouchableOpacity,
-  TextInput,
   Button,
+  StyleSheet,
 } from "react-native";
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { useNavigation } from "@react-navigation/native";
-import { db } from "../../firebase";
-import { Picker } from "@react-native-picker/picker"; // Import the Picker component
+import { db, auth } from "../../firebase";
+import { Picker } from "@react-native-picker/picker";
 
 const DetailsScreen = () => {
   const [users, setUsers] = useState([]);
   const [nameFilter, setNameFilter] = useState("");
   const [timezoneFilter, setTimezoneFilter] = useState("");
   const [goalFilter, setGoalFilter] = useState("");
+  const [loggedInUserEmail, setLoggedInUserEmail] = useState("");
   const navigation = useNavigation();
 
   useEffect(() => {
-    fetchUsers();
+    // Fetch the user's authentication state
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      if (user) {
+        setLoggedInUserEmail(user.email);
+        fetchUsers();
+      }
+    });
+
+    return unsubscribe;
   }, [nameFilter, timezoneFilter, goalFilter]);
 
   const fetchUsers = async () => {
@@ -48,13 +56,17 @@ const DetailsScreen = () => {
     // Map the query snapshot to user data
     const usersData = querySnapshot.docs.map((doc) => doc.data());
 
+    // Filter out the logged-in user from the list
+    const filteredUsers = usersData.filter(
+      (user) => user.email !== loggedInUserEmail
+    );
+
     // Set the filtered users to the state
-    setUsers(usersData);
+    setUsers(filteredUsers);
   };
 
-  const handleSendMessage = (user) => {
-    // Navigate to the MessagesScreen with the selected user's information
-    navigation.navigate("Messages", { user });
+  const handleUserSelection = (user) => {
+    navigation.navigate("Results", { user });
   };
 
   const renderUserItem = ({ item }) => {
@@ -66,9 +78,9 @@ const DetailsScreen = () => {
         <Text>Goal: {item.goal}</Text>
         <TouchableOpacity
           style={styles.messageButton}
-          onPress={() => handleSendMessage(item)}
+          onPress={() => handleUserSelection(item)}
         >
-          <Text style={styles.buttonText}>Message</Text>
+          <Text style={styles.buttonText}>View Profile</Text>
         </TouchableOpacity>
       </View>
     );
@@ -76,7 +88,6 @@ const DetailsScreen = () => {
 
   return (
     <View style={styles.container}>
-      {/* Use Picker to select from the predefined names */}
       <Picker
         selectedValue={nameFilter}
         onValueChange={(itemValue) => setNameFilter(itemValue)}
@@ -88,7 +99,6 @@ const DetailsScreen = () => {
         <Picker.Item label="Juri" value="Juri" />
       </Picker>
 
-      {/* Add the rest of the filters (timezone and goal) */}
       <Picker
         selectedValue={timezoneFilter}
         onValueChange={(itemValue) => setTimezoneFilter(itemValue)}

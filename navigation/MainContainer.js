@@ -128,7 +128,7 @@ const CustomHeader = ({ navigation, routeName }) => {
       <TouchableOpacity
         onPress={() => {
           // Handle icon press here for the common icon (e.g., settings)
-          navigation.navigate("Home");
+          navigation.navigate("Settings");
         }}
       >
         <Ionicons name="settings-outline" size={24} color="#000000" />
@@ -152,6 +152,7 @@ export default function MainContainer() {
         <Stack.Screen name={loginName} component={LoginScreen} />
         <Stack.Screen name={RegName} component={RegistrationScreen} />
         <Stack.Screen name={resultsName} component={ResultsScreen} />
+        <Stack.Screen name={settingsName} component={SettingsScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
