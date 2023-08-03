@@ -31,8 +31,9 @@ const RegistrationScreen = () => {
         // Set the same ID for the user document in Firestore
         const userDocRef = doc(db, "users", uid);
 
-        // Store user data in Firestore
+        // Store user data in Firestore, including the uid field
         const userData = {
+          uid: uid, // Manually set the uid field in the userData object
           name: selectedName,
           timezone: selectedTimezone,
           goal: selectedGoal,
@@ -44,7 +45,7 @@ const RegistrationScreen = () => {
         setDoc(userDocRef, userData)
           .then(() => {
             console.log("User registered:", user.email);
-            // Use navigation.navigate to go back to the "Home" screen
+            console.log("UID:", uid);
             navigation.navigate(homeName);
           })
           .catch((error) => {
@@ -52,7 +53,10 @@ const RegistrationScreen = () => {
             alert(error.message);
           });
       })
-      .catch((error) => alert(error.message));
+      .catch((error) => {
+        console.error("Registration error:", error);
+        alert(error.message);
+      });
   };
 
   return (

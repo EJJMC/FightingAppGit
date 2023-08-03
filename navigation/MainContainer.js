@@ -1,3 +1,80 @@
+// // MainContainer.js
+// import React from "react";
+// import { NavigationContainer } from "@react-navigation/native";
+// import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+// import { createStackNavigator } from "@react-navigation/stack";
+// import { Ionicons } from "@expo/vector-icons";
+
+// // Screens
+// import HomeScreen from "./screens/HomeScreen";
+// import DetailsScreen from "./screens/DetailsScreen";
+// import MessagesScreen from "./screens/MessageScreen"; // Import the MessagesScreen component
+// // ... import other screens ...
+
+// const Tab = createBottomTabNavigator();
+// const Stack = createStackNavigator();
+
+// function TabNavigator() {
+//   return (
+//     <Tab.Navigator>
+//       <Tab.Screen
+//         name="Home"
+//         component={HomeScreen}
+//         options={{
+//           tabBarIcon: ({ focused }) => (
+//             <Ionicons
+//               name={focused ? "ios-home" : "ios-home-outline"}
+//               size={24}
+//               color={focused ? "#007AFF" : "#8E8E93"}
+//             />
+//           ),
+//         }}
+//       />
+//       <Tab.Screen
+//         name="Details"
+//         component={DetailsStackScreen}
+//         options={{
+//           tabBarIcon: ({ focused }) => (
+//             <Ionicons
+//               name={focused ? "ios-list-box" : "ios-list-outline"}
+//               size={24}
+//               color={focused ? "#007AFF" : "#8E8E93"}
+//             />
+//           ),
+//         }}
+//       />
+//       {/* Add more screens to the bottom tab navigator */}
+//     </Tab.Navigator>
+//   );
+// }
+
+// function DetailsStackScreen() {
+//   return (
+//     <Stack.Navigator>
+//       <Stack.Screen
+//         name="Details"
+//         component={DetailsScreen}
+//         options={{ headerTitle: "Users Details" }}
+//       />
+//       <Stack.Screen
+//         name="Messages"
+//         component={MessagesScreen} // Use the MessagesScreen component
+//         options={({ route }) => ({
+//           title: `Messages with ${route.params.user.username}`,
+//         })}
+//       />
+//     </Stack.Navigator>
+//   );
+// }
+
+// export default function MainContainer() {
+//   return (
+//     <NavigationContainer>
+//       <TabNavigator />
+//     </NavigationContainer>
+//   );
+// }
+
 import * as React from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
@@ -26,7 +103,7 @@ const homeName = "Home";
 const detailsName = "Details";
 const settingsName = "Settings";
 const profileName = "Profile";
-const messageName = "Message";
+const messageName = "Messages";
 const loginName = "Login";
 const RegName = "Registration";
 const resultsName = "Results";
