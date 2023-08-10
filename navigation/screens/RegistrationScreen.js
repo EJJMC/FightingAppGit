@@ -6,12 +6,12 @@ import {
   View,
   TextInput,
   TouchableOpacity,
-  Picker,
 } from "react-native";
 import { auth, db } from "../../firebase";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
 import { useNavigation } from "@react-navigation/native";
+import { Picker } from "@react-native-picker/picker";
 
 const RegistrationScreen = () => {
   const [email, setEmail] = useState("");
