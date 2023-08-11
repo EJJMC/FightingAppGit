@@ -12,7 +12,6 @@ import {
   where,
   onSnapshot,
   orderBy,
-  getDocs,
 } from "firebase/firestore";
 import { db, auth } from "../../firebase";
 import { useNavigation } from "@react-navigation/native";
@@ -33,23 +32,51 @@ const SettingsScreen = () => {
     // Initialize the messages collection reference
     const messagesRef = collection(db, "Messages");
 
-    // Create a query to filter messages where the current user's UID is the recipientID
+    // Create a query to filter received messages where the current user's UID is the recipientID
     const receivedMessagesQuery = query(
       messagesRef,
       where("recipientID", "==", currentUser.uid),
       orderBy("timestamp", "asc")
     );
 
-    // Subscribe to changes in the messages collection based on the query
-    const unsubscribe = onSnapshot(receivedMessagesQuery, (snapshot) => {
-      const receivedMessages = snapshot.docs.map((doc) => doc.data());
-      setMessages(receivedMessages);
+    // Create a query to filter sent messages where the current user's UID is the senderID
+    const sentMessagesQuery = query(
+      messagesRef,
+      where("senderID", "==", currentUser.uid),
+      orderBy("timestamp", "asc")
+    );
+
+    // Subscribe to changes in the received messages collection based on the query
+    const unsubscribeReceived = onSnapshot(
+      receivedMessagesQuery,
+      (snapshot) => {
+        const receivedMessages = snapshot.docs.map((doc) => doc.data());
+        setMessages((prevMessages) => [...prevMessages, ...receivedMessages]);
+        setUniqueSenderIDs([
+          ...new Set([
+            ...uniqueSenderIDs,
+            ...receivedMessages.map((msg) => msg.senderID),
+          ]),
+        ]);
+      }
+    );
+
+    // Subscribe to changes in the sent messages collection based on the query
+    const unsubscribeSent = onSnapshot(sentMessagesQuery, (snapshot) => {
+      const sentMessages = snapshot.docs.map((doc) => doc.data());
+      setMessages((prevMessages) => [...prevMessages, ...sentMessages]);
       setUniqueSenderIDs([
-        ...new Set(receivedMessages.map((msg) => msg.senderID)),
+        ...new Set([
+          ...uniqueSenderIDs,
+          ...sentMessages.map((msg) => msg.recipientID),
+        ]),
       ]);
     });
 
-    return () => unsubscribe(); // Cleanup the listener when the component unmounts
+    return () => {
+      unsubscribeReceived(); // Cleanup the listener for received messages
+      unsubscribeSent(); // Cleanup the listener for sent messages
+    };
   }, []);
 
   const handleOpenConversation = (senderID, senderUsername) => {

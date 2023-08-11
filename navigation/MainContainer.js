@@ -97,6 +97,7 @@ import MessageScreen from "./screens/MessageScreen";
 import LoginScreen from "./screens/LoginScreen";
 import RegistrationScreen from "./screens/RegistrationScreen";
 import ResultsScreen from "./screens/ResultsScreen";
+import UserProfileScreen from "./screens/UserProfileScreen";
 
 // Screen Names
 const homeName = "Home";
@@ -107,6 +108,7 @@ const messageName = "Messages";
 const loginName = "Login";
 const RegName = "Registration";
 const resultsName = "Results";
+const UserProfileName = "UserProfile";
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -133,6 +135,14 @@ const CustomHeader = ({ navigation, routeName }) => {
       >
         <Ionicons name="settings-outline" size={24} color="#000000" />
       </TouchableOpacity>
+      <TouchableOpacity
+        onPress={() => {
+          // Handle icon press here for the common icon (e.g., settings)
+          navigation.navigate("UserProfile");
+        }}
+      >
+        <Ionicons name="settings-outline" size={24} color="#000000" />
+      </TouchableOpacity>
     </View>
   );
 };
@@ -153,6 +163,7 @@ export default function MainContainer() {
         <Stack.Screen name={RegName} component={RegistrationScreen} />
         <Stack.Screen name={resultsName} component={ResultsScreen} />
         <Stack.Screen name={settingsName} component={SettingsScreen} />
+        <Stack.Screen name={UserProfileName} component={UserProfileScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
@@ -186,7 +197,6 @@ function CustomTabBarBackground({ state, descriptors, navigation }) {
           } else if (route.name === profileName) {
             iconName = isFocused ? "settings" : "settings-outline";
           }
-
           return (
             <Ionicons
               key={route.key}
@@ -264,6 +274,12 @@ function TabNavigator({ navigation, route }) {
       <Tab.Screen
         name={resultsName}
         component={ResultsScreen}
+        options={{ headerShown: true }}
+      />
+
+      <Tab.Screen
+        name={UserProfileName}
+        component={UserProfileScreen}
         options={{ headerShown: false }}
       />
     </Tab.Navigator>

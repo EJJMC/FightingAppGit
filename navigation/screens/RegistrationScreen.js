@@ -6,6 +6,7 @@ import {
   View,
   TextInput,
   TouchableOpacity,
+  ScrollView,
 } from "react-native";
 import { auth, db } from "../../firebase";
 import { createUserWithEmailAndPassword } from "firebase/auth";
@@ -19,7 +20,17 @@ const RegistrationScreen = () => {
   const [selectedName, setSelectedName] = useState("Ryu");
   const [selectedTimezone, setSelectedTimezone] = useState("PST");
   const [selectedGoal, setSelectedGoal] = useState("Casual Set");
-  const [username, setUsername] = useState(""); // State for the username
+  const [selectedRank, setSelectedRank] = useState("Master");
+  const [username, setUsername] = useState("");
+  const [imageUrl, setImageUrl] = useState("");
+  const [cfnName, setCFNName] = useState("");
+  const [socialMedia, setSocialMedia] = useState({
+    twitch: "",
+    youtube: "",
+    discord: "",
+    twitter: "",
+  });
+
   const navigation = useNavigation();
 
   const handleSignup = () => {
@@ -33,15 +44,20 @@ const RegistrationScreen = () => {
 
         // Store user data in Firestore, including the uid field
         const userData = {
-          uid: uid, // Manually set the uid field in the userData object
+          uid: uid,
           name: selectedName,
           timezone: selectedTimezone,
           goal: selectedGoal,
-          username: username, // Include the inputted username
+          rank: selectedRank,
+          username: username,
+          cfnName: cfnName, // Add CFN Name
+          socialMedia: socialMedia, // Add Social Media object
           email: user.email,
+          photoUrl:
+            imageUrl ||
+            "https://www.dexerto.com/cdn-cgi/image/width=3840,quality=75,format=auto/https://editors.dexerto.com/wp-content/uploads/2023/08/07/mortal-kombat-1-trailer-reptile-ashrah-havik-sareena-evo.jpg",
         };
 
-        // Set the user data in Firestore with the specified document ID
         setDoc(userDocRef, userData)
           .then(() => {
             console.log("User registered:", user.email);
@@ -77,17 +93,41 @@ const RegistrationScreen = () => {
           secureTextEntry
         />
 
-        <Text style={styles.title}>Choose a Main Character</Text>
-
-        <Picker
-          selectedValue={selectedName}
-          onValueChange={(itemValue) => setSelectedName(itemValue)}
+        <TextInput
+          placeholder="Profile Picture URL"
+          value={imageUrl}
+          onChangeText={(text) => setImageUrl(text)}
           style={styles.input}
-        >
-          <Picker.Item label="Ryu" value="Ryu" />
-          <Picker.Item label="Ken" value="Ken" />
-          <Picker.Item label="Juri" value="Juri" />
-        </Picker>
+        />
+
+        <Text style={styles.title}>Choose a Main Character</Text>
+        <ScrollView style={styles.pickerContainer}>
+          <Picker
+            selectedValue={selectedName}
+            onValueChange={(itemValue) => setSelectedName(itemValue)}
+            style={styles.input}
+          >
+            <Picker.Item label="Ryu" value="Ryu" />
+            <Picker.Item label="Ken" value="Ken" />
+            <Picker.Item label="Juri" value="Juri" />
+            <Picker.Item label="Rashid" value="Rashid" />
+            <Picker.Item label="Cammy" value="Cammy" />
+            <Picker.Item label="Lily" value="Lily" />
+            <Picker.Item label="Zangief" value="Zangief" />
+            <Picker.Item label="JP" value="JP" />
+            <Picker.Item label="Marisa" value="Marisa" />
+            <Picker.Item label="Manon" value="Manon" />
+            <Picker.Item label="Dee Jay" value="Dee Jay" />
+            <Picker.Item label="E.Honda" value="E.Honda" />
+            <Picker.Item label="Dhalsim" value="Dhalsim" />
+            <Picker.Item label="Blanka" value="Blanka" />
+            <Picker.Item label="Kimberly" value="Kimberly" />
+            <Picker.Item label="Guile" value="Guile" />
+            <Picker.Item label="Chun-Li" value="Chun-Li" />
+            <Picker.Item label="Jamie" value="Jamie" />
+            <Picker.Item label="Luke" value="Luke" />
+          </Picker>
+        </ScrollView>
 
         <Text style={styles.title}>Choose a Timezone</Text>
         <Picker
@@ -113,10 +153,65 @@ const RegistrationScreen = () => {
           <Picker.Item label="Matchup Experience" value="Matchup Experience" />
         </Picker>
 
+        <Text style={styles.title}>Select Your Rank</Text>
+        <Picker
+          selectedValue={selectedRank}
+          onValueChange={(itemValue) => setSelectedRank(itemValue)}
+          style={styles.input}
+        >
+          <Picker.Item label="Master" value="Master" />
+          <Picker.Item label="Platinum" value="Platinum" />
+          <Picker.Item label="Diamond" value="Diamond" />
+          <Picker.Item label="Gold" value="Gold" />
+          <Picker.Item label="Silver" value="Silver" />
+          <Picker.Item label="Iron" value="Iron" />
+        </Picker>
+
         <TextInput
           placeholder="Username"
           value={username}
           onChangeText={(text) => setUsername(text)}
+          style={styles.input}
+        />
+
+        <TextInput
+          placeholder="CFN Name"
+          value={cfnName}
+          onChangeText={(text) => setCFNName(text)}
+          style={styles.input}
+        />
+
+        <Text style={styles.title}>Social Media</Text>
+        <TextInput
+          placeholder="Twitch Username"
+          value={socialMedia.twitch}
+          onChangeText={(text) =>
+            setSocialMedia({ ...socialMedia, twitch: text })
+          }
+          style={styles.input}
+        />
+        <TextInput
+          placeholder="YouTube Channel"
+          value={socialMedia.youtube}
+          onChangeText={(text) =>
+            setSocialMedia({ ...socialMedia, youtube: text })
+          }
+          style={styles.input}
+        />
+        <TextInput
+          placeholder="Discord Username"
+          value={socialMedia.discord}
+          onChangeText={(text) =>
+            setSocialMedia({ ...socialMedia, discord: text })
+          }
+          style={styles.input}
+        />
+        <TextInput
+          placeholder="Twitter Handle"
+          value={socialMedia.twitter}
+          onChangeText={(text) =>
+            setSocialMedia({ ...socialMedia, twitter: text })
+          }
           style={styles.input}
         />
       </View>
@@ -176,6 +271,9 @@ const styles = StyleSheet.create({
     color: "#0782F9",
     fontWeight: "700",
     fontSize: 16,
+  },
+  pickerContainer: {
+    maxHeight: 150,
   },
 });
 

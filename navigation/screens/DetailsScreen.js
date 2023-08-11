@@ -12,7 +12,7 @@ import { useNavigation } from "@react-navigation/native";
 import { db, auth } from "../../firebase";
 import { Picker } from "@react-native-picker/picker";
 
-const DetailsScreen = () => {
+const DetailsScreen = ({ route }) => {
   const [users, setUsers] = useState([]);
   const [nameFilter, setNameFilter] = useState("");
   const [timezoneFilter, setTimezoneFilter] = useState("");
@@ -72,6 +72,7 @@ const DetailsScreen = () => {
   const renderUserItem = ({ item }) => {
     return (
       <View style={styles.userItem}>
+        <Text style={styles.welcomeText}>Welcome, {loggedInUserEmail}</Text>
         <Text style={styles.username}>Username: {item.username}</Text>
         <Text>Name: {item.name}</Text>
         <Text>Timezone: {item.timezone}</Text>

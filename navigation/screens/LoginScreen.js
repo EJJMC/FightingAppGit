@@ -45,8 +45,6 @@ const LoginScreen = () => {
 
         // Store user data in Firestore
         const userData = {
-          username: username,
-          age: age,
           email: user.email,
         };
 

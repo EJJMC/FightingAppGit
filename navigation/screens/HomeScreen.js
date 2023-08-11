@@ -36,6 +36,7 @@ const HomeScreen = () => {
       .then(() => {
         // Logout successful
         console.log("User logged out successfully.");
+        navigation.navigate("Login");
       })
       .catch((error) => {
         // Handle logout error

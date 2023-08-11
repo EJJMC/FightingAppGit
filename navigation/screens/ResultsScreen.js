@@ -1,5 +1,6 @@
 import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { Avatar } from "react-native-elements";
 
 const ResultsScreen = ({ route, navigation }) => {
   const { user } = route.params;
@@ -10,13 +11,29 @@ const ResultsScreen = ({ route, navigation }) => {
 
   return (
     <View style={styles.container}>
+      <Avatar
+        source={{ uri: user.photoUrl }}
+        rounded
+        size="large"
+        containerStyle={styles.avatar}
+      />
       <Text style={styles.text}>Username: {user.username}</Text>
       <Text style={styles.text}>Name: {user.name}</Text>
       <Text style={styles.text}>Timezone: {user.timezone}</Text>
       <Text style={styles.text}>Goal: {user.goal}</Text>
+      <Text style={styles.text}>CFN Name: {user.cfnName}</Text>
+      <View style={styles.socialMediaContainer}>
+        <Text style={styles.text}>Social Media:</Text>
+        {Object.entries(user.socialMedia).map(([platform, value], index) => (
+          <Text key={index} style={styles.text}>
+            {platform}: {value}
+          </Text>
+        ))}
+      </View>
+      <Text style={styles.text}>Rank: {user.rank}</Text>
       <TouchableOpacity
         style={styles.messageButton}
-        onPress={() => handleSendMessage(user)} // Use 'user' instead of 'item' here
+        onPress={() => handleSendMessage(user)}
       >
         <Text style={styles.buttonText}>Message</Text>
       </TouchableOpacity>
@@ -34,6 +51,9 @@ const styles = StyleSheet.create({
     fontSize: 18,
     marginBottom: 10,
   },
+  socialMediaContainer: {
+    marginBottom: 10,
+  },
   messageButton: {
     marginTop: 8,
     backgroundColor: "#0782F9",
@@ -44,6 +64,9 @@ const styles = StyleSheet.create({
   buttonText: {
     color: "white",
     fontWeight: "bold",
+  },
+  avatar: {
+    marginBottom: 20,
   },
 });
 
