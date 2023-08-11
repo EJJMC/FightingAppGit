@@ -5,9 +5,16 @@ import {
   FlatList,
   TouchableOpacity,
   Button,
+  TextInput,
   StyleSheet,
 } from "react-native";
-import { collection, getDocs, query, where } from "firebase/firestore";
+import {
+  collection,
+  getDocs,
+  query,
+  where,
+  startAfter,
+} from "firebase/firestore";
 import { useNavigation } from "@react-navigation/native";
 import { db, auth } from "../../firebase";
 import { Picker } from "@react-native-picker/picker";
@@ -17,7 +24,10 @@ const DetailsScreen = ({ route }) => {
   const [nameFilter, setNameFilter] = useState("");
   const [timezoneFilter, setTimezoneFilter] = useState("");
   const [goalFilter, setGoalFilter] = useState("");
+  const [rankFilter, setRankFilter] = useState(""); // New state for rank filtering
   const [loggedInUserEmail, setLoggedInUserEmail] = useState("");
+  const [cfnNameSearch, setCFNNameSearch] = useState(""); // New state for CFN name search
+  const [selectedRank, setSelectedRank] = useState(""); // New state for rank picker
   const navigation = useNavigation();
 
   useEffect(() => {
@@ -30,7 +40,7 @@ const DetailsScreen = ({ route }) => {
     });
 
     return unsubscribe;
-  }, [nameFilter, timezoneFilter, goalFilter]);
+  }, [nameFilter, timezoneFilter, goalFilter, rankFilter]); // Update dependencies
 
   const fetchUsers = async () => {
     const usersRef = collection(db, "users");
@@ -48,6 +58,9 @@ const DetailsScreen = ({ route }) => {
     }
     if (goalFilter) {
       baseQuery = query(baseQuery, where("goal", "==", goalFilter));
+    }
+    if (rankFilter) {
+      baseQuery = query(baseQuery, where("rank", "==", rankFilter)); // Apply rank filter
     }
 
     // Execute the query
@@ -72,11 +85,11 @@ const DetailsScreen = ({ route }) => {
   const renderUserItem = ({ item }) => {
     return (
       <View style={styles.userItem}>
-        <Text style={styles.welcomeText}>Welcome, {loggedInUserEmail}</Text>
-        <Text style={styles.username}>Username: {item.username}</Text>
-        <Text>Name: {item.name}</Text>
+        <Text style={styles.username}>{item.username}</Text>
+        <Text>Main Character: {item.name}</Text>
         <Text>Timezone: {item.timezone}</Text>
         <Text>Goal: {item.goal}</Text>
+        <Text>Rank: {item.rank}</Text> {/* Display the user's rank */}
         <TouchableOpacity
           style={styles.messageButton}
           onPress={() => handleUserSelection(item)}
@@ -89,6 +102,13 @@ const DetailsScreen = ({ route }) => {
 
   return (
     <View style={styles.container}>
+      <TextInput
+        placeholder="Search by CFN Name"
+        value={cfnNameSearch}
+        onChangeText={(text) => setCFNNameSearch(text)}
+        style={styles.searchInput}
+      />
+
       <Picker
         selectedValue={nameFilter}
         onValueChange={(itemValue) => setNameFilter(itemValue)}
@@ -120,6 +140,21 @@ const DetailsScreen = ({ route }) => {
         <Picker.Item label="Casual Set" value="Casual Set" />
         <Picker.Item label="Tournament Practice" value="Tournament Practice" />
         <Picker.Item label="Matchup Experience" value="Matchup Experience" />
+      </Picker>
+
+      {/* New Picker for rank filtering */}
+      <Picker
+        selectedValue={rankFilter}
+        onValueChange={(itemValue) => setRankFilter(itemValue)}
+        style={styles.picker}
+      >
+        <Picker.Item label="All Ranks" value="" />
+        <Picker.Item label="Master" value="Master" />
+        <Picker.Item label="Platinum" value="Platinum" />
+        <Picker.Item label="Diamond" value="Diamond" />
+        <Picker.Item label="Gold" value="Gold" />
+        <Picker.Item label="Silver" value="Silver" />
+        <Picker.Item label="Iron" value="Iron" />
       </Picker>
 
       <Button title="Apply Filters" onPress={fetchUsers} />
@@ -164,6 +199,13 @@ const styles = StyleSheet.create({
     borderColor: "#ccc",
     borderRadius: 8,
     marginBottom: 8,
+  },
+  searchInput: {
+    borderWidth: 1,
+    borderColor: "#ccc",
+    borderRadius: 8,
+    marginBottom: 8,
+    paddingHorizontal: 8,
   },
 });
 

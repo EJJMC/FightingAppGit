@@ -1,117 +1,45 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
-  FlatList,
   StyleSheet,
+  FlatList,
   TouchableOpacity,
 } from "react-native";
-import {
-  collection,
-  query,
-  where,
-  onSnapshot,
-  orderBy,
-} from "firebase/firestore";
-import { db, auth } from "../../firebase";
+import { collection, getDocs } from "firebase/firestore";
+import { db } from "../../firebase";
 import { useNavigation } from "@react-navigation/native";
 
-const SettingsScreen = () => {
-  const [uniqueSenderIDs, setUniqueSenderIDs] = useState([]);
-  const [messages, setMessages] = useState([]);
+const UserListScreen = () => {
   const navigation = useNavigation();
+  const [users, setUsers] = useState([]);
 
   useEffect(() => {
-    // Ensure the user is logged in before fetching messages
-    const currentUser = auth.currentUser;
-    if (!currentUser) {
-      console.error("User is not logged in.");
-      return;
-    }
-
-    // Initialize the messages collection reference
-    const messagesRef = collection(db, "Messages");
-
-    // Create a query to filter received messages where the current user's UID is the recipientID
-    const receivedMessagesQuery = query(
-      messagesRef,
-      where("recipientID", "==", currentUser.uid),
-      orderBy("timestamp", "asc")
-    );
-
-    // Create a query to filter sent messages where the current user's UID is the senderID
-    const sentMessagesQuery = query(
-      messagesRef,
-      where("senderID", "==", currentUser.uid),
-      orderBy("timestamp", "asc")
-    );
-
-    // Subscribe to changes in the received messages collection based on the query
-    const unsubscribeReceived = onSnapshot(
-      receivedMessagesQuery,
-      (snapshot) => {
-        const receivedMessages = snapshot.docs.map((doc) => doc.data());
-        setMessages((prevMessages) => [...prevMessages, ...receivedMessages]);
-        setUniqueSenderIDs([
-          ...new Set([
-            ...uniqueSenderIDs,
-            ...receivedMessages.map((msg) => msg.senderID),
-          ]),
-        ]);
-      }
-    );
-
-    // Subscribe to changes in the sent messages collection based on the query
-    const unsubscribeSent = onSnapshot(sentMessagesQuery, (snapshot) => {
-      const sentMessages = snapshot.docs.map((doc) => doc.data());
-      setMessages((prevMessages) => [...prevMessages, ...sentMessages]);
-      setUniqueSenderIDs([
-        ...new Set([
-          ...uniqueSenderIDs,
-          ...sentMessages.map((msg) => msg.recipientID),
-        ]),
-      ]);
-    });
-
-    return () => {
-      unsubscribeReceived(); // Cleanup the listener for received messages
-      unsubscribeSent(); // Cleanup the listener for sent messages
+    const fetchUsers = async () => {
+      const usersRef = collection(db, "users");
+      const querySnapshot = await getDocs(usersRef);
+      const userList = querySnapshot.docs.map((doc) => doc.data());
+      setUsers(userList);
     };
+
+    fetchUsers();
   }, []);
 
-  const handleOpenConversation = (senderID, senderUsername) => {
-    const sender = { uid: senderID, username: senderUsername };
-    navigation.navigate("Messages", { user: sender });
-  };
-
-  const getLatestMessageFromSender = (senderID) => {
-    return messages.find((msg) => msg.senderID === senderID);
-  };
-
-  const renderMessageItem = ({ item: senderID }) => {
-    const latestMessage = getLatestMessageFromSender(senderID);
-    return (
-      <TouchableOpacity
-        onPress={() =>
-          handleOpenConversation(senderID, latestMessage.senderUsername)
-        }
-      >
-        <View style={styles.messageContainer}>
-          <Text style={styles.sender}>
-            From: {latestMessage.senderUsername}
-          </Text>
-          <Text style={styles.text}>{latestMessage.text}</Text>
-        </View>
-      </TouchableOpacity>
-    );
+  const handleUserPress = (user) => {
+    navigation.navigate("Messages", { user });
   };
 
   return (
     <View style={styles.container}>
+      <Text style={styles.title}>Choose a User to Message</Text>
       <FlatList
-        data={uniqueSenderIDs}
-        renderItem={renderMessageItem}
-        keyExtractor={(item, index) => item + index}
+        data={users}
+        keyExtractor={(user) => user.email}
+        renderItem={({ item }) => (
+          <TouchableOpacity onPress={() => handleUserPress(item)}>
+            <Text style={styles.userItem}>{item.cfnName}</Text>
+          </TouchableOpacity>
+        )}
       />
     </View>
   );
@@ -120,22 +48,18 @@ const SettingsScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 16,
+    padding: 20,
   },
-  messageContainer: {
-    borderWidth: 1,
-    borderColor: "#ccc",
-    borderRadius: 8,
-    padding: 16,
-    marginBottom: 10,
-  },
-  sender: {
-    fontSize: 16,
+  title: {
+    fontSize: 24,
     fontWeight: "bold",
+    marginBottom: 20,
   },
-  text: {
-    marginTop: 8,
+  userItem: {
+    fontSize: 18,
+    marginBottom: 10,
+    color: "#0782F9", // Choose your desired text color
   },
 });
 
-export default SettingsScreen;
+export default UserListScreen;
