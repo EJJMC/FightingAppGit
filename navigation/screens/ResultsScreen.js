@@ -1,6 +1,7 @@
 import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { Avatar } from "react-native-elements";
+import { WebView } from "react-native-webview";
 
 const ResultsScreen = ({ route, navigation }) => {
   const { user } = route.params;
@@ -31,6 +32,18 @@ const ResultsScreen = ({ route, navigation }) => {
         ))}
       </View>
       <Text style={styles.text}>Rank: {user.rank}</Text>
+
+      {/* Display YouTube video using <iframe> tag */}
+      {user.youtubeVideo && (
+        <iframe
+          width="300"
+          height="200"
+          src={user.youtubeVideo}
+          frameborder="0"
+          allowfullscreen
+        ></iframe>
+      )}
+
       <TouchableOpacity
         style={styles.messageButton}
         onPress={() => handleSendMessage(user)}
@@ -67,6 +80,11 @@ const styles = StyleSheet.create({
   },
   avatar: {
     marginBottom: 20,
+  },
+  webview: {
+    width: 300,
+    height: 200,
+    marginVertical: 10,
   },
 });
 

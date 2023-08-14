@@ -30,6 +30,7 @@ const RegistrationScreen = () => {
     discord: "",
     twitter: "",
   });
+  const [youtubeVideo, setYoutubeVideo] = useState(""); // New state for YouTube video
 
   const navigation = useNavigation();
 
@@ -50,8 +51,9 @@ const RegistrationScreen = () => {
           goal: selectedGoal,
           rank: selectedRank,
           username: username,
-          cfnName: cfnName, // Add CFN Name
-          socialMedia: socialMedia, // Add Social Media object
+          cfnName: cfnName,
+          socialMedia: socialMedia,
+          youtubeVideo: youtubeVideo, // Include YouTube video link
           email: user.email,
           photoUrl:
             imageUrl ||
@@ -74,7 +76,6 @@ const RegistrationScreen = () => {
         alert(error.message);
       });
   };
-
   return (
     <KeyboardAvoidingView style={styles.container} behavior="padding">
       <View style={styles.inputContainer}>
@@ -212,6 +213,13 @@ const RegistrationScreen = () => {
           onChangeText={(text) =>
             setSocialMedia({ ...socialMedia, twitter: text })
           }
+          style={styles.input}
+        />
+        <Text style={styles.title}>YouTube Video</Text>
+        <TextInput
+          placeholder="YouTube Video Link"
+          value={youtubeVideo}
+          onChangeText={(text) => setYoutubeVideo(text)}
           style={styles.input}
         />
       </View>
