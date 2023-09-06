@@ -24,10 +24,10 @@ const DetailsScreen = ({ route }) => {
   const [nameFilter, setNameFilter] = useState("");
   const [timezoneFilter, setTimezoneFilter] = useState("");
   const [goalFilter, setGoalFilter] = useState("");
-  const [rankFilter, setRankFilter] = useState(""); // New state for rank filtering
+  const [rankFilter, setRankFilter] = useState(""); 
   const [loggedInUserEmail, setLoggedInUserEmail] = useState("");
-  const [cfnNameSearch, setCFNNameSearch] = useState(""); // New state for CFN name search
-  const [selectedRank, setSelectedRank] = useState(""); // New state for rank picker
+  const [cfnNameSearch, setCFNNameSearch] = useState(""); 
+  const [selectedRank, setSelectedRank] = useState(""); 
   const navigation = useNavigation();
 
   useEffect(() => {
@@ -46,10 +46,10 @@ const DetailsScreen = ({ route }) => {
     const usersRef = collection(db, "users");
     let querySnapshot = null;
 
-    // Create a base query to fetch all users
+  
     let baseQuery = query(usersRef);
 
-    // Apply filters if they are not empty
+    
     if (nameFilter) {
       baseQuery = query(baseQuery, where("name", "==", nameFilter));
     }
@@ -59,6 +59,7 @@ const DetailsScreen = ({ route }) => {
     if (goalFilter) {
       baseQuery = query(baseQuery, where("goal", "==", goalFilter));
     }
+
     if (rankFilter) {
       baseQuery = query(baseQuery, where("rank", "==", rankFilter)); // Apply rank filter
     }
@@ -89,7 +90,7 @@ const DetailsScreen = ({ route }) => {
         <Text>Main Character: {item.name}</Text>
         <Text>Timezone: {item.timezone}</Text>
         <Text>Goal: {item.goal}</Text>
-        <Text>Rank: {item.rank}</Text> {/* Display the user's rank */}
+        <Text>Rank: {item.rank}</Text>
         <TouchableOpacity
           style={styles.messageButton}
           onPress={() => handleUserSelection(item)}
@@ -142,7 +143,7 @@ const DetailsScreen = ({ route }) => {
         <Picker.Item label="Matchup Experience" value="Matchup Experience" />
       </Picker>
 
-      {/* New Picker for rank filtering */}
+    
       <Picker
         selectedValue={rankFilter}
         onValueChange={(itemValue) => setRankFilter(itemValue)}

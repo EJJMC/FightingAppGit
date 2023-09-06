@@ -197,6 +197,7 @@ function CustomTabBarBackground({ state, descriptors, navigation }) {
           } else if (route.name === profileName) {
             iconName = isFocused ? "settings" : "settings-outline";
           }
+
           return (
             <Ionicons
               key={route.key}
@@ -268,7 +269,16 @@ function TabNavigator({ navigation, route }) {
       <Tab.Screen
         name={profileName}
         component={ProfileScreen}
-        options={{ headerShown: false }}
+        options={{
+          headerShown: false,
+          headerTitle: "cooking with gas",
+          headerRight: () => (
+            <CustomHeader
+              navigation={navigation}
+              routeName={currentRouteName}
+            />
+          ),
+        }}
       />
 
       <Tab.Screen
