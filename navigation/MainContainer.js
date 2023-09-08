@@ -119,8 +119,6 @@ const CustomHeader = ({ navigation, routeName }) => {
       {routeName === resultsName && (
         <TouchableOpacity
           onPress={() => {
-            // Handle icon press here for the "Results" screen
-            // For example, you can do something specific for the "Results" screen
             console.log("Results icon pressed!");
           }}
         >
@@ -169,6 +167,19 @@ export default function MainContainer() {
   );
 }
 function CustomTabBarBackground({ state, descriptors, navigation }) {
+  // Define an array of screen names where you want to hide the tab bar
+  const screensWithHiddenTabBar = [loginName, RegName]; // Add screen names here
+
+  // Check if the current screen name is in the array of screens to hide the tab bar
+  const shouldHideTabBar = screensWithHiddenTabBar.includes(
+    state.routes[state.index].name
+  );
+
+  // If shouldHideTabBar is true, don't render the tab bar
+  if (shouldHideTabBar) {
+    return null; // Return null to hide the tab bar
+  }
+
   return (
     <View style={styles.tabBarBackground}>
       <Image
@@ -222,7 +233,6 @@ function CustomTabBarBackground({ state, descriptors, navigation }) {
     </View>
   );
 }
-
 function TabNavigator({ navigation, route }) {
   const currentRouteName = route.state
     ? route.state.routes[route.state.index].name
@@ -264,7 +274,7 @@ function TabNavigator({ navigation, route }) {
       <Tab.Screen
         name={loginName}
         component={LoginScreen}
-        options={{ headerShown: false }}
+        options={{ headerShown: false, tabBarVisible: false }}
       />
       <Tab.Screen
         name={profileName}

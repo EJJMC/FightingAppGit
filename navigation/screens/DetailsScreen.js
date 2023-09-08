@@ -24,10 +24,10 @@ const DetailsScreen = ({ route }) => {
   const [nameFilter, setNameFilter] = useState("");
   const [timezoneFilter, setTimezoneFilter] = useState("");
   const [goalFilter, setGoalFilter] = useState("");
-  const [rankFilter, setRankFilter] = useState(""); 
+  const [rankFilter, setRankFilter] = useState("");
   const [loggedInUserEmail, setLoggedInUserEmail] = useState("");
-  const [cfnNameSearch, setCFNNameSearch] = useState(""); 
-  const [selectedRank, setSelectedRank] = useState(""); 
+  const [cfnNameSearch, setCFNNameSearch] = useState("");
+  const [selectedRank, setSelectedRank] = useState("");
   const navigation = useNavigation();
 
   useEffect(() => {
@@ -46,10 +46,8 @@ const DetailsScreen = ({ route }) => {
     const usersRef = collection(db, "users");
     let querySnapshot = null;
 
-  
     let baseQuery = query(usersRef);
 
-    
     if (nameFilter) {
       baseQuery = query(baseQuery, where("name", "==", nameFilter));
     }
@@ -79,6 +77,11 @@ const DetailsScreen = ({ route }) => {
     setUsers(filteredUsers);
   };
 
+  // Filter users by CFN Name
+  const filteredUsers = users.filter((user) =>
+    user.username.toLowerCase().includes(cfnNameSearch.toLowerCase())
+  );
+
   const handleUserSelection = (user) => {
     navigation.navigate("Results", { user });
   };
@@ -106,7 +109,10 @@ const DetailsScreen = ({ route }) => {
       <TextInput
         placeholder="Search by CFN Name"
         value={cfnNameSearch}
-        onChangeText={(text) => setCFNNameSearch(text)}
+        onChangeText={(text) => {
+          setCFNNameSearch(text);
+          console.log(text);
+        }}
         style={styles.searchInput}
       />
 
@@ -115,10 +121,26 @@ const DetailsScreen = ({ route }) => {
         onValueChange={(itemValue) => setNameFilter(itemValue)}
         style={styles.picker}
       >
-        <Picker.Item label="All Names" value="" />
+        <Picker.Item label="All Characters" value="" />
         <Picker.Item label="Ryu" value="Ryu" />
         <Picker.Item label="Ken" value="Ken" />
         <Picker.Item label="Juri" value="Juri" />
+        <Picker.Item label="Rashid" value="Rashid" />
+        <Picker.Item label="Cammy" value="Cammy" />
+        <Picker.Item label="Lily" value="Lily" />
+        <Picker.Item label="Zangief" value="Zangief" />
+        <Picker.Item label="JP" value="JP" />
+        <Picker.Item label="Marisa" value="Marisa" />
+        <Picker.Item label="Manon" value="Manon" />
+        <Picker.Item label="Dee Jay" value="Dee Jay" />
+        <Picker.Item label="E.Honda" value="E.Honda" />
+        <Picker.Item label="Dhalsim" value="Dhalsim" />
+        <Picker.Item label="Blanka" value="Blanka" />
+        <Picker.Item label="Kimberly" value="Kimberly" />
+        <Picker.Item label="Guile" value="Guile" />
+        <Picker.Item label="Chun-Li" value="Chun-Li" />
+        <Picker.Item label="Jamie" value="Jamie" />
+        <Picker.Item label="Luke" value="Luke" />
       </Picker>
 
       <Picker
@@ -143,7 +165,6 @@ const DetailsScreen = ({ route }) => {
         <Picker.Item label="Matchup Experience" value="Matchup Experience" />
       </Picker>
 
-    
       <Picker
         selectedValue={rankFilter}
         onValueChange={(itemValue) => setRankFilter(itemValue)}
@@ -160,7 +181,7 @@ const DetailsScreen = ({ route }) => {
 
       <Button title="Apply Filters" onPress={fetchUsers} />
       <FlatList
-        data={users}
+        data={filteredUsers} // Use filteredUsers here
         renderItem={renderUserItem}
         keyExtractor={(item) => item.username}
       />
