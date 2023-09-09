@@ -2,183 +2,143 @@ import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
-  TextInput,
   StyleSheet,
   TouchableOpacity,
+  TextInput,
+  FlatList,
 } from "react-native";
 import {
   collection,
-  query,
-  where,
-  onSnapshot,
   addDoc,
   serverTimestamp,
+  onSnapshot,
+  query,
+  where,
   orderBy,
 } from "firebase/firestore";
 import { db, auth } from "../../firebase";
 
-const MessagesScreen = ({ route }) => {
+const MessageScreen = ({ route, navigation }) => {
   const { user } = route.params;
 
-  if (!user || !user.uid) {
-    // Handle the case when the user object or user ID is not available
-    return <Text>Loading...</Text>;
-  }
+  const [message, setMessage] = useState(""); // State to hold the message text
+  const [messages, setMessages] = useState([]); // State to hold the list of messages
 
-  const [messages, setMessages] = useState([]);
-  const [message, setMessage] = useState("");
+  // Function to send a message
+  const sendMessage = async () => {
+    const senderUid = auth.currentUser.uid;
 
-  useEffect(() => {
-    // Initialize the messages collection reference
-    const messagesRef = collection(db, "Messages");
-
-    // Create a query to filter messages by the current user's UID as either sender or recipient
-    const userMessagesQuery = query(
-      messagesRef,
-      orderBy("timestamp", "asc"),
-      where("recipientID", "==", user.uid),
-      where("senderID", "==", auth.currentUser.uid)
-    );
-
-    // Subscribe to changes in the messages collection based on the query
-    const unsubscribe = onSnapshot(userMessagesQuery, (snapshot) => {
-      const userMessages = snapshot.docs.map((doc) => doc.data());
-      setMessages(userMessages);
-    });
-
-    return () => unsubscribe(); // Cleanup the listener when the component unmounts
-  }, [user.uid]);
-
-  const handleSendMessage = async () => {
-    if (message.trim() === "") {
-      return;
-    }
-
-    // Clear the input text box
-    setMessage("");
-
-    // Get the UID of the currently authenticated user
-    const currentUser = auth.currentUser;
-    if (!currentUser) {
-      console.error("User is not logged in.");
-      return;
-    }
-    const senderId = currentUser.uid;
-
-    // Send the message to the recipient using Firebase Firestore
     try {
-      await addDoc(collection(db, "Messages"), {
-        recipientID: user.uid, // 'user' here represents the receiver user object from route.params
-        senderID: senderId, // Set the senderID to the current user's UID
-        text: message,
+      // Add a new message document to the Firestore collection
+      await addDoc(collection(db, "Newmessages"), {
+        senderUid,
+        recipientUid: user.uid,
+        content: message,
         timestamp: serverTimestamp(),
       });
+
+      console.log("Message sent successfully!");
+      setMessage(""); // Clear the message input field
     } catch (error) {
       console.error("Error sending message:", error);
     }
   };
 
+  // Function to listen for new messages and update the state
+  useEffect(() => {
+    // Create a query to fetch messages for both sender and recipient
+    const messagesQuery = query(
+      collection(db, "Newmessages"),
+      orderBy("timestamp"),
+      where("senderUid", "in", [auth.currentUser.uid, user.uid]),
+      where("recipientUid", "in", [auth.currentUser.uid, user.uid])
+    );
+
+    const unsubscribe = onSnapshot(messagesQuery, (querySnapshot) => {
+      const newMessages = [];
+      querySnapshot.forEach((doc) => {
+        const data = doc.data();
+        newMessages.push({
+          id: doc.id,
+          senderUid: data.senderUid,
+          recipientUid: data.recipientUid,
+          content: data.content,
+          timestamp: data.timestamp,
+        });
+      });
+      setMessages(newMessages);
+    });
+
+    return () => {
+      // Unsubscribe from the snapshot listener when the component unmounts
+      unsubscribe();
+    };
+  }, []); // Run this effect once on component mount
+
   return (
     <View style={styles.container}>
-      <View style={styles.messageContainer}>
-        {messages.map((msg, index) => (
+      {/* Chat messages */}
+      <FlatList
+        data={messages}
+        keyExtractor={(item) => item.id}
+        renderItem={({ item }) => (
           <View
-            key={index}
             style={[
-              styles.message,
-              msg.senderID === auth.currentUser.uid
-                ? styles.myMessage
-                : styles.otherMessage,
+              styles.messageContainer,
+              {
+                alignSelf:
+                  item.senderUid === auth.currentUser.uid
+                    ? "flex-end"
+                    : "flex-start",
+              },
             ]}
           >
             <Text
-              style={
-                msg.senderID === auth.currentUser.uid
-                  ? styles.myMessageText
-                  : styles.otherMessageText
-              }
+              style={[
+                styles.messageText,
+                {
+                  backgroundColor:
+                    item.senderUid === auth.currentUser.uid
+                      ? "#0782F9" // Your sent message background color
+                      : "#ccc", // Recipient's message background color
+                  color:
+                    item.senderUid === auth.currentUser.uid ? "white" : "black",
+                },
+              ]}
             >
-              {msg.text}
+              {item.content}
             </Text>
           </View>
-        ))}
-      </View>
+        )}
+      />
 
-      <View style={styles.inputContainer}>
-        <TextInput
-          placeholder="Type your message..."
-          value={message}
-          onChangeText={(text) => setMessage(text)}
-          style={styles.input}
-        />
-        <TouchableOpacity onPress={handleSendMessage} style={styles.sendButton}>
-          <Text style={styles.sendButtonText}>Send</Text>
-        </TouchableOpacity>
-      </View>
+      {/* Message input */}
+      <TextInput
+        placeholder="Type your message..."
+        value={message}
+        onChangeText={(text) => setMessage(text)}
+        style={styles.messageInput}
+      />
+
+      {/* Send button */}
+      <TouchableOpacity style={styles.sendButton} onPress={sendMessage}>
+        <Text style={styles.sendButtonText}>Send</Text>
+      </TouchableOpacity>
     </View>
   );
 };
 
-// ...rest of the component remains the same
-
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 16,
+  // ...other styles...
+
+  messageContainer: {
+    marginVertical: 4,
   },
-  input: {
-    borderWidth: 1,
-    borderColor: "#ccc",
+  messageText: {
     padding: 8,
     borderRadius: 8,
-    marginBottom: 8,
-  },
-  messageContainer: {
-    flex: 1,
-    justifyContent: "flex-end",
-    padding: 10,
-  },
-  message: {
-    backgroundColor: "#f0f0f0",
-    padding: 10,
-    borderRadius: 8,
-    marginBottom: 10,
-  },
-  myMessage: {
-    backgroundColor: "#0782F9",
-    alignSelf: "flex-end",
-    marginLeft: 50,
-    marginRight: 10,
-  },
-  otherMessage: {
-    backgroundColor: "#f0f0f0",
-    alignSelf: "flex-start",
-    marginRight: 50,
-    marginLeft: 10,
-  },
-  myMessageText: {
-    color: "white", // Set the text color for the user's messages
-  },
-  otherMessageText: {
-    color: "black", // Set the text color for the sender's messages
-  },
-  inputContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    padding: 10,
-    borderTopWidth: 1,
-    borderColor: "#ccc",
-  },
-  sendButton: {
-    backgroundColor: "#0782F9",
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-    borderRadius: 10,
-  },
-  sendButtonText: {
-    color: "white",
-    fontWeight: "700",
+    maxWidth: "70%",
   },
 });
 
-export default MessagesScreen;
+export default MessageScreen;
