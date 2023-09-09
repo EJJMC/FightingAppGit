@@ -28,8 +28,10 @@ import bgImage from "../../assets/blue.png";
 import { auth } from "../../firebase";
 import { signOut } from "firebase/auth";
 import NewsList from "./NewsList";
+import { useNavigation } from "@react-navigation/native";
 
 const HomeScreen = () => {
+  const navigation = useNavigation();
   const handleLogout = () => {
     // Call the signOut function to log the user out
     signOut(auth)

@@ -78,160 +78,165 @@ const RegistrationScreen = () => {
   };
   return (
     <KeyboardAvoidingView style={styles.container} behavior="padding">
-      <View style={styles.inputContainer}>
-        <TextInput
-          placeholder="Email"
-          value={email}
-          onChangeText={(text) => setEmail(text)}
-          style={styles.input}
-        />
+      <ScrollView contentContainerStyle={styles.scrollContainer}>
+        <View style={styles.inputContainer}>
+          <TextInput
+            placeholder="Email"
+            value={email}
+            onChangeText={(text) => setEmail(text)}
+            style={styles.input}
+          />
 
-        <TextInput
-          placeholder="Password"
-          value={password}
-          onChangeText={(text) => setPassword(text)}
-          style={styles.input}
-          secureTextEntry
-        />
+          <TextInput
+            placeholder="Password"
+            value={password}
+            onChangeText={(text) => setPassword(text)}
+            style={styles.input}
+            secureTextEntry
+          />
 
-        <TextInput
-          placeholder="Profile Picture URL"
-          value={imageUrl}
-          onChangeText={(text) => setImageUrl(text)}
-          style={styles.input}
-        />
+          <TextInput
+            placeholder="Profile Picture URL"
+            value={imageUrl}
+            onChangeText={(text) => setImageUrl(text)}
+            style={styles.input}
+          />
 
-        <Text style={styles.title}>Choose a Main Character</Text>
-        <ScrollView style={styles.pickerContainer}>
+          <Text style={styles.title}>Choose a Main Character</Text>
+          <ScrollView style={styles.pickerContainer}>
+            <Picker
+              selectedValue={selectedName}
+              onValueChange={(itemValue) => setSelectedName(itemValue)}
+              style={styles.input}
+            >
+              <Picker.Item label="Ryu" value="Ryu" />
+              <Picker.Item label="Ken" value="Ken" />
+              <Picker.Item label="Juri" value="Juri" />
+              <Picker.Item label="Rashid" value="Rashid" />
+              <Picker.Item label="Cammy" value="Cammy" />
+              <Picker.Item label="Lily" value="Lily" />
+              <Picker.Item label="Zangief" value="Zangief" />
+              <Picker.Item label="JP" value="JP" />
+              <Picker.Item label="Marisa" value="Marisa" />
+              <Picker.Item label="Manon" value="Manon" />
+              <Picker.Item label="Dee Jay" value="Dee Jay" />
+              <Picker.Item label="E.Honda" value="E.Honda" />
+              <Picker.Item label="Dhalsim" value="Dhalsim" />
+              <Picker.Item label="Blanka" value="Blanka" />
+              <Picker.Item label="Kimberly" value="Kimberly" />
+              <Picker.Item label="Guile" value="Guile" />
+              <Picker.Item label="Chun-Li" value="Chun-Li" />
+              <Picker.Item label="Jamie" value="Jamie" />
+              <Picker.Item label="Luke" value="Luke" />
+            </Picker>
+          </ScrollView>
+
+          <Text style={styles.title}>Choose a Timezone</Text>
           <Picker
-            selectedValue={selectedName}
-            onValueChange={(itemValue) => setSelectedName(itemValue)}
+            selectedValue={selectedTimezone}
+            onValueChange={(itemValue) => setSelectedTimezone(itemValue)}
             style={styles.input}
           >
-            <Picker.Item label="Ryu" value="Ryu" />
-            <Picker.Item label="Ken" value="Ken" />
-            <Picker.Item label="Juri" value="Juri" />
-            <Picker.Item label="Rashid" value="Rashid" />
-            <Picker.Item label="Cammy" value="Cammy" />
-            <Picker.Item label="Lily" value="Lily" />
-            <Picker.Item label="Zangief" value="Zangief" />
-            <Picker.Item label="JP" value="JP" />
-            <Picker.Item label="Marisa" value="Marisa" />
-            <Picker.Item label="Manon" value="Manon" />
-            <Picker.Item label="Dee Jay" value="Dee Jay" />
-            <Picker.Item label="E.Honda" value="E.Honda" />
-            <Picker.Item label="Dhalsim" value="Dhalsim" />
-            <Picker.Item label="Blanka" value="Blanka" />
-            <Picker.Item label="Kimberly" value="Kimberly" />
-            <Picker.Item label="Guile" value="Guile" />
-            <Picker.Item label="Chun-Li" value="Chun-Li" />
-            <Picker.Item label="Jamie" value="Jamie" />
-            <Picker.Item label="Luke" value="Luke" />
+            <Picker.Item label="PST" value="PST" />
+            <Picker.Item label="GMT" value="GMT" />
+            <Picker.Item label="EST" value="EST" />
           </Picker>
-        </ScrollView>
+          <Text style={styles.title}>What are your Goals</Text>
+          <Picker
+            selectedValue={selectedGoal}
+            onValueChange={(itemValue) => setSelectedGoal(itemValue)}
+            style={styles.input}
+          >
+            <Picker.Item label="Casual Set" value="Casual Set" />
+            <Picker.Item
+              label="Tournament Practice"
+              value="Tournament Practice"
+            />
+            <Picker.Item
+              label="Matchup Experience"
+              value="Matchup Experience"
+            />
+          </Picker>
 
-        <Text style={styles.title}>Choose a Timezone</Text>
-        <Picker
-          selectedValue={selectedTimezone}
-          onValueChange={(itemValue) => setSelectedTimezone(itemValue)}
-          style={styles.input}
-        >
-          <Picker.Item label="PST" value="PST" />
-          <Picker.Item label="GMT" value="GMT" />
-          <Picker.Item label="EST" value="EST" />
-        </Picker>
-        <Text style={styles.title}>What are your Goals</Text>
-        <Picker
-          selectedValue={selectedGoal}
-          onValueChange={(itemValue) => setSelectedGoal(itemValue)}
-          style={styles.input}
-        >
-          <Picker.Item label="Casual Set" value="Casual Set" />
-          <Picker.Item
-            label="Tournament Practice"
-            value="Tournament Practice"
+          <Text style={styles.title}>Select Your Rank</Text>
+          <Picker
+            selectedValue={selectedRank}
+            onValueChange={(itemValue) => setSelectedRank(itemValue)}
+            style={styles.input}
+          >
+            <Picker.Item label="Master" value="Master" />
+            <Picker.Item label="Platinum" value="Platinum" />
+            <Picker.Item label="Diamond" value="Diamond" />
+            <Picker.Item label="Gold" value="Gold" />
+            <Picker.Item label="Silver" value="Silver" />
+            <Picker.Item label="Iron" value="Iron" />
+          </Picker>
+
+          <TextInput
+            placeholder="Username"
+            value={username}
+            onChangeText={(text) => setUsername(text)}
+            style={styles.input}
           />
-          <Picker.Item label="Matchup Experience" value="Matchup Experience" />
-        </Picker>
 
-        <Text style={styles.title}>Select Your Rank</Text>
-        <Picker
-          selectedValue={selectedRank}
-          onValueChange={(itemValue) => setSelectedRank(itemValue)}
-          style={styles.input}
-        >
-          <Picker.Item label="Master" value="Master" />
-          <Picker.Item label="Platinum" value="Platinum" />
-          <Picker.Item label="Diamond" value="Diamond" />
-          <Picker.Item label="Gold" value="Gold" />
-          <Picker.Item label="Silver" value="Silver" />
-          <Picker.Item label="Iron" value="Iron" />
-        </Picker>
+          <TextInput
+            placeholder="CFN Name"
+            value={cfnName}
+            onChangeText={(text) => setCFNName(text)}
+            style={styles.input}
+          />
 
-        <TextInput
-          placeholder="Username"
-          value={username}
-          onChangeText={(text) => setUsername(text)}
-          style={styles.input}
-        />
+          <Text style={styles.title}>Social Media</Text>
+          <TextInput
+            placeholder="Twitch Username"
+            value={socialMedia.twitch}
+            onChangeText={(text) =>
+              setSocialMedia({ ...socialMedia, twitch: text })
+            }
+            style={styles.input}
+          />
+          <TextInput
+            placeholder="YouTube Channel"
+            value={socialMedia.youtube}
+            onChangeText={(text) =>
+              setSocialMedia({ ...socialMedia, youtube: text })
+            }
+            style={styles.input}
+          />
+          <TextInput
+            placeholder="Discord Username"
+            value={socialMedia.discord}
+            onChangeText={(text) =>
+              setSocialMedia({ ...socialMedia, discord: text })
+            }
+            style={styles.input}
+          />
+          <TextInput
+            placeholder="Twitter Handle"
+            value={socialMedia.twitter}
+            onChangeText={(text) =>
+              setSocialMedia({ ...socialMedia, twitter: text })
+            }
+            style={styles.input}
+          />
+          <Text style={styles.title}>YouTube Video</Text>
+          <TextInput
+            placeholder="YouTube Video Link"
+            value={youtubeVideo}
+            onChangeText={(text) => setYoutubeVideo(text)}
+            style={styles.input}
+          />
+        </View>
 
-        <TextInput
-          placeholder="CFN Name"
-          value={cfnName}
-          onChangeText={(text) => setCFNName(text)}
-          style={styles.input}
-        />
-
-        <Text style={styles.title}>Social Media</Text>
-        <TextInput
-          placeholder="Twitch Username"
-          value={socialMedia.twitch}
-          onChangeText={(text) =>
-            setSocialMedia({ ...socialMedia, twitch: text })
-          }
-          style={styles.input}
-        />
-        <TextInput
-          placeholder="YouTube Channel"
-          value={socialMedia.youtube}
-          onChangeText={(text) =>
-            setSocialMedia({ ...socialMedia, youtube: text })
-          }
-          style={styles.input}
-        />
-        <TextInput
-          placeholder="Discord Username"
-          value={socialMedia.discord}
-          onChangeText={(text) =>
-            setSocialMedia({ ...socialMedia, discord: text })
-          }
-          style={styles.input}
-        />
-        <TextInput
-          placeholder="Twitter Handle"
-          value={socialMedia.twitter}
-          onChangeText={(text) =>
-            setSocialMedia({ ...socialMedia, twitter: text })
-          }
-          style={styles.input}
-        />
-        <Text style={styles.title}>YouTube Video</Text>
-        <TextInput
-          placeholder="YouTube Video Link"
-          value={youtubeVideo}
-          onChangeText={(text) => setYoutubeVideo(text)}
-          style={styles.input}
-        />
-      </View>
-
-      <View style={styles.buttonContainer}>
-        <TouchableOpacity
-          onPress={handleSignup}
-          style={[styles.button, styles.buttonOutline]}
-        >
-          <Text style={styles.buttonOutlineText}> Register</Text>
-        </TouchableOpacity>
-      </View>
+        <View style={styles.buttonContainer}>
+          <TouchableOpacity
+            onPress={handleSignup}
+            style={[styles.button, styles.buttonOutline]}
+          >
+            <Text style={styles.buttonOutlineText}> Register</Text>
+          </TouchableOpacity>
+        </View>
+      </ScrollView>
     </KeyboardAvoidingView>
   );
 };
@@ -239,6 +244,11 @@ const RegistrationScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  scrollContainer: {
+    flexGrow: 1, // This property allows the content to grow within the ScrollView
     justifyContent: "center",
     alignItems: "center",
   },

@@ -1,44 +1,161 @@
-import React, { useEffect, useState } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  FlatList,
-  TouchableOpacity,
-} from "react-native";
-import { collection, getDocs } from "firebase/firestore";
-import { db } from "../../firebase";
-import { useNavigation } from "@react-navigation/native";
+// import React, { useEffect, useState } from "react";
+// import {
+//   View,
+//   Text,
+//   StyleSheet,
+//   FlatList,
+//   TouchableOpacity,
+// } from "react-native";
+// import { collection, getDocs } from "firebase/firestore";
+// import { db } from "../../firebase";
+// import { useNavigation } from "@react-navigation/native";
 
-const UserListScreen = () => {
-  const navigation = useNavigation();
-  const [users, setUsers] = useState([]);
+// const UserListScreen = () => {
+//   const navigation = useNavigation();
+//   const [users, setUsers] = useState([]);
+
+//   useEffect(() => {
+//     const fetchUsers = async () => {
+//       const usersRef = collection(db, "users");
+//       const querySnapshot = await getDocs(usersRef);
+//       const userList = querySnapshot.docs.map((doc) => doc.data());
+//       setUsers(userList);
+//     };
+
+//     fetchUsers();
+//   }, []);
+
+//   const handleUserPress = (user) => {
+//     navigation.navigate("Messages", { user });
+//   };
+
+//   return (
+//     <View style={styles.container}>
+//       <Text style={styles.title}>Choose a User to Message</Text>
+//       <FlatList
+//         data={users}
+//         keyExtractor={(user) => user.email}
+//         renderItem={({ item }) => (
+//           <TouchableOpacity onPress={() => handleUserPress(item)}>
+//             <Text style={styles.userItem}>{item.cfnName}</Text>
+//           </TouchableOpacity>
+//         )}
+//       />
+//     </View>
+//   );
+// };
+
+// const styles = StyleSheet.create({
+//   container: {
+//     flex: 1,
+//     padding: 20,
+//   },
+//   title: {
+//     fontSize: 24,
+//     fontWeight: "bold",
+//     marginBottom: 20,
+//   },
+//   userItem: {
+//     fontSize: 18,
+//     marginBottom: 10,
+//     color: "#0782F9", // Choose your desired text color
+//   },
+// });
+
+// export default UserListScreen;
+
+import React, { useState, useEffect } from "react";
+import { View, Text, FlatList, StyleSheet } from "react-native";
+import {
+  collection,
+  query,
+  where,
+  orderBy,
+  onSnapshot,
+  doc,
+  getDoc,
+} from "firebase/firestore";
+import { db, auth } from "../../firebase";
+import { TouchableOpacity } from "react-native";
+
+const ChatHistoryScreen = ({ navigation }) => {
+  const [chatHistory, setChatHistory] = useState([]);
+
+  const navigateToChat = (user) => {
+    navigation.navigate("ResultsScreen", { user });
+  };
 
   useEffect(() => {
-    const fetchUsers = async () => {
-      const usersRef = collection(db, "users");
-      const querySnapshot = await getDocs(usersRef);
-      const userList = querySnapshot.docs.map((doc) => doc.data());
-      setUsers(userList);
-    };
+    // Create a query to fetch the latest message for each user
+    const messagesQuery = query(
+      collection(db, "Newmessages"),
+      orderBy("timestamp", "desc"), // Order messages by timestamp in descending order
+      where("senderUid", "==", auth.currentUser.uid) // Sent messages
+    );
 
-    fetchUsers();
+    const latestMessages = {}; // To store the latest message for each user
+
+    const unsubscribe = onSnapshot(messagesQuery, async (querySnapshot) => {
+      querySnapshot.forEach((doc) => {
+        const recipientUid = doc.data().recipientUid;
+
+        if (!latestMessages[recipientUid]) {
+          latestMessages[recipientUid] = {
+            id: doc.id,
+            content: doc.data().content,
+          };
+        }
+      });
+
+      // Convert the latestMessages object to an array
+      const chatHistoryData = await Promise.all(
+        Object.keys(latestMessages).map(async (recipientUid) => {
+          const displayName = await getDisplayName(recipientUid);
+          return {
+            recipientUid,
+            displayName,
+            ...latestMessages[recipientUid],
+          };
+        })
+      );
+
+      setChatHistory(chatHistoryData);
+    });
+
+    return () => {
+      unsubscribe();
+    };
   }, []);
 
-  const handleUserPress = (user) => {
-    navigation.navigate("Messages", { user });
+  // Function to get the display name based on the UID
+  // Function to get the display name based on the UID
+  const getDisplayName = async (uid) => {
+    try {
+      const userDoc = doc(db, "users", uid); // Replace "users" with your user collection name
+      const userSnap = await getDoc(userDoc);
+      if (userSnap.exists()) {
+        return userSnap.data().cfnName; // Replace "cfnName" with your display name field
+      }
+    } catch (error) {
+      console.error("Error fetching display name:", error);
+    }
+    return "Unknown"; // Return a default value if display name is not found
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Choose a User to Message</Text>
       <FlatList
-        data={users}
-        keyExtractor={(user) => user.email}
+        data={chatHistory}
+        keyExtractor={(item) => item.recipientUid} // Use recipientUid as the key
         renderItem={({ item }) => (
-          <TouchableOpacity onPress={() => handleUserPress(item)}>
-            <Text style={styles.userItem}>{item.cfnName}</Text>
-          </TouchableOpacity>
+          <View style={styles.messageContainer}>
+            <Text style={styles.messageText}>
+              To: {item.displayName} {/* Display recipient's display name */}
+            </Text>
+            <Text style={styles.messageText}>
+              Latest Message: {item.content} {/* Display the latest message */}
+            </Text>
+          </View>
         )}
       />
     </View>
@@ -48,115 +165,16 @@ const UserListScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
+    padding: 16,
   },
-  title: {
-    fontSize: 24,
-    fontWeight: "bold",
-    marginBottom: 20,
+  messageContainer: {
+    marginVertical: 4,
   },
-  userItem: {
-    fontSize: 18,
-    marginBottom: 10,
-    color: "#0782F9", // Choose your desired text color
+  messageText: {
+    padding: 8,
+    borderRadius: 8,
+    maxWidth: "70%",
   },
 });
 
-export default UserListScreen;
-
-// import React, { useState, useEffect } from "react";
-// import { View, Text, Button } from "react-native";
-
-// const GamepadInputScreen = () => {
-//   const [buttonPresses, setButtonPresses] = useState([]);
-//   const [joystickX, setJoystickX] = useState(0);
-//   const [joystickY, setJoystickY] = useState(0);
-//   const [specialMove, setSpecialMove] = useState("");
-//   const [sequenceStep, setSequenceStep] = useState(0);
-//   const [sequenceError, setSequenceError] = useState(false);
-//   const [correctInputsCount, setCorrectInputsCount] = useState(0);
-//   const [wrongInputsCount, setWrongInputsCount] = useState(0);
-//   const [totalTries, setTotalTries] = useState(0);
-
-//   useEffect(() => {
-//     const handleGamepadInput = () => {
-//       const gamepads = navigator.getGamepads();
-//       for (const gamepad of gamepads) {
-//         if (gamepad) {
-//           const pressedButtons = [];
-//           for (let i = 0; i < gamepad.buttons.length; i++) {
-//             if (gamepad.buttons[i].pressed) {
-//               pressedButtons.push(i);
-//             }
-//           }
-//           setButtonPresses(pressedButtons);
-
-//           if (sequenceError) {
-//             setSequenceError(false);
-//             setWrongInputsCount(wrongInputsCount + 1);
-//           }
-
-//           if (sequenceStep === 0 && gamepad.buttons[13].pressed) {
-//             setSequenceStep(1);
-//           } else if (sequenceStep === 1 && gamepad.buttons[15].pressed) {
-//             setSequenceStep(2);
-//           } else if (sequenceStep === 2 && gamepad.buttons[2].pressed) {
-//             setSpecialMove("Hadouken");
-//             setSequenceStep(0);
-//             setCorrectInputsCount(correctInputsCount + 1);
-//           } else {
-//             if (
-//               gamepad.buttons[13].pressed ||
-//               gamepad.buttons[15].pressed ||
-//               gamepad.buttons[2].pressed
-//             ) {
-//               setSequenceError(true);
-//             }
-//             setSequenceStep(0);
-//             setSpecialMove("");
-//           }
-
-//           // Handle joystick input
-//           const adjustedJoystickX = gamepad.axes[0];
-//           const adjustedJoystickY = gamepad.axes[1];
-
-//           setJoystickX(adjustedJoystickX);
-//           setJoystickY(adjustedJoystickY);
-//         }
-//       }
-//     };
-
-//     const interval = setInterval(handleGamepadInput, 100);
-
-//     return () => {
-//       clearInterval(interval);
-//     };
-//   }, [sequenceStep, sequenceError, correctInputsCount, wrongInputsCount]);
-
-//   const handleRetry = () => {
-//     setCorrectInputsCount(0);
-//     setWrongInputsCount(0);
-//     setTotalTries(totalTries + 1);
-//   };
-
-//   return (
-//     <View>
-//       <Text>Gamepad Input Handling</Text>
-//       <Text>Pressed Buttons: {buttonPresses.join(", ")}</Text>
-//       <Text>Joystick X: {joystickX.toFixed(2)}</Text>
-//       <Text>Joystick Y: {joystickY}</Text>
-//       {sequenceError && (
-//         <Text style={{ color: "red" }}>Incorrect Sequence</Text>
-//       )}
-//       {specialMove && <Text>Special Move: {specialMove}</Text>}
-//       <Text>Correct Inputs Count: {correctInputsCount}</Text>
-//       <Text>Wrong Inputs Count: {wrongInputsCount}</Text>
-//       <Text>Total Tries: {totalTries}</Text>
-//       <Button title="Retry" onPress={handleRetry} />
-//     </View>
-//   );
-// };
-
-// export default GamepadInputScreen;
-
-// RegularReactScreen.js
+export default ChatHistoryScreen;

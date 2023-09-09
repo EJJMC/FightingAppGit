@@ -35,8 +35,9 @@ const MessagesScreen = ({ route }) => {
     // Create a query to filter messages by the current user's UID as either sender or recipient
     const userMessagesQuery = query(
       messagesRef,
+      orderBy("timestamp", "asc"),
       where("recipientID", "==", user.uid),
-      orderBy("timestamp", "asc")
+      where("senderID", "==", auth.currentUser.uid)
     );
 
     // Subscribe to changes in the messages collection based on the query
@@ -85,14 +86,14 @@ const MessagesScreen = ({ route }) => {
             key={index}
             style={[
               styles.message,
-              msg.senderId === auth.currentUser.uid
+              msg.senderID === auth.currentUser.uid
                 ? styles.myMessage
                 : styles.otherMessage,
             ]}
           >
             <Text
               style={
-                msg.senderId === auth.currentUser.uid
+                msg.senderID === auth.currentUser.uid
                   ? styles.myMessageText
                   : styles.otherMessageText
               }
@@ -117,6 +118,8 @@ const MessagesScreen = ({ route }) => {
     </View>
   );
 };
+
+// ...rest of the component remains the same
 
 const styles = StyleSheet.create({
   container: {
