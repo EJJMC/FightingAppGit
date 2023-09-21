@@ -341,91 +341,140 @@ const YourComponent = () => {
   };
 
   return (
-    <ImageBackground source={bgImage} style={styles.backgroundImage}>
-      <View style={styles.container}>
-        <Image source={require("../../assets/news.png")} style={styles.image} />
+    <ScrollView contentContainerStyle={styles.container}>
+      <ImageBackground source={bgImage} style={styles.backgroundImage}>
+        <View style={styles.content}>
+          <Image source={require("../../assets/timezone.png")} />
 
-        <Picker
-          selectedValue={selectedTimezone}
-          onValueChange={(itemValue) => setSelectedTimezone(itemValue)}
-          style={[styles.picker, styles.bluePicker]}
-        >
-          <Picker.Item label="All Timezones" value="" />
-          <Picker.Item label="PST" value="PST" />
-          <Picker.Item label="GMT" value="GMT" />
-          <Picker.Item label="EST" value="EST" />
-        </Picker>
-        <Picker
-          selectedValue={selectedRank}
-          onValueChange={(itemValue) => setSelectedRank(itemValue)}
-          style={[styles.picker, styles.bluePicker]}
-        >
-          <Picker.Item label="All Ranks" value="" />
-          <Picker.Item label="Master" value="Master" />
-          <Picker.Item label="Platinum" value="Platinum" />
-          <Picker.Item label="Diamond" value="Diamond" />
-          <Picker.Item label="Gold" value="Gold" />
-          <Picker.Item label="Silver" value="Silver" />
-          <Picker.Item label="Iron" value="Iron" />
-        </Picker>
-        <Picker
-          selectedValue={selectedGoal}
-          onValueChange={(itemValue) => setSelectedGoal(itemValue)}
-          style={[styles.picker, styles.bluePicker]}
-        >
-          <Picker.Item label="All Goals" value="" />
-          <Picker.Item label="Casual Set" value="Casual Set" />
-          <Picker.Item
-            label="Tournament Practice"
-            value="Tournament Practice"
+          <Image
+            source={require("../../assets/Map.png")}
+            style={{
+              ...styles.image,
+              transform: [{ scale: 0.7 }],
+            }}
           />
-          <Picker.Item label="Matchup Experience" value="Matchup Experience" />
-        </Picker>
 
-        <FlatList
-          horizontal
-          data={characters}
-          keyExtractor={(character) => character.name}
-          renderItem={({ item }) => (
-            <TouchableOpacity
-              style={[
-                styles.characterOption,
-                selectedCharacter === item ? styles.selectedOption : null,
-              ]}
-              onPress={() => handleCharacterSelect(item)}
-            >
-              <Image source={item.imageSource} style={styles.characterImage} />
-              <Text style={styles.characterName}>{item.name}</Text>
-            </TouchableOpacity>
-          )}
-        />
+          <Picker
+            selectedValue={selectedTimezone}
+            onValueChange={(itemValue) => setSelectedTimezone(itemValue)}
+            style={[styles.picker, styles.bluePicker]}
+          >
+            <Picker.Item label="All Timezones" value="" />
+            <Picker.Item label="PST" value="PST" />
+            <Picker.Item label="GMT" value="GMT" />
+            <Picker.Item label="EST" value="EST" />
+          </Picker>
+          <Image
+            source={require("../../assets/SelectRank.png")}
+            style={{
+              ...styles.image,
+              transform: [{ scale: 0.8 }],
+            }}
+          />
+          <Picker
+            selectedValue={selectedRank}
+            onValueChange={(itemValue) => setSelectedRank(itemValue)}
+            style={[styles.picker, styles.bluePicker]}
+          >
+            <Picker.Item label="All Ranks" value="" />
+            <Picker.Item label="Master" value="Master" />
+            <Picker.Item label="Platinum" value="Platinum" />
+            <Picker.Item label="Diamond" value="Diamond" />
+            <Picker.Item label="Gold" value="Gold" />
+            <Picker.Item label="Silver" value="Silver" />
+            <Picker.Item label="Iron" value="Iron" />
+          </Picker>
 
-        <Text>
-          Selected Character: {selectedCharacter ? selectedCharacter.name : ""}
-        </Text>
-        <FlatList
-          data={filteredUsers}
-          keyExtractor={(user) => user.id}
-          renderItem={({ item }) => (
-            <View style={styles.userItem}>
-              <Text style={styles.userText}>Name: {item.name}</Text>
-              <Text style={styles.userText}>CFN Name: {item.cfnName}</Text>
+          <Image
+            source={require("../../assets/SelectGoal.png")}
+            style={{
+              ...styles.image,
+              transform: [{ scale: 0.7 }],
+            }}
+          />
+
+          <Picker
+            selectedValue={selectedGoal}
+            onValueChange={(itemValue) => setSelectedGoal(itemValue)}
+            style={[styles.picker, styles.bluePicker]}
+          >
+            <Picker.Item label="All Goals" value="" />
+            <Picker.Item label="Casual Set" value="Casual Set" />
+            <Picker.Item
+              label="Tournament Practice"
+              value="Tournament Practice"
+            />
+            <Picker.Item
+              label="Matchup Experience"
+              value="Matchup Experience"
+            />
+          </Picker>
+
+          <Image
+            source={require("../../assets/SelectCharacter.png")}
+            style={{
+              ...styles.image,
+              transform: [{ scale: 0.7 }],
+            }}
+          />
+
+          <FlatList
+            horizontal
+            data={characters}
+            keyExtractor={(character) => character.name}
+            renderItem={({ item }) => (
               <TouchableOpacity
-                style={styles.viewProfileButton}
-                onPress={() => navigateToUserProfile(item)}
+                style={[
+                  styles.characterOption,
+                  selectedCharacter === item ? styles.selectedOption : null,
+                ]}
+                onPress={() => handleCharacterSelect(item)}
               >
-                <Text style={styles.viewProfileButtonText}>View Profile</Text>
+                <Image
+                  source={item.imageSource}
+                  style={styles.characterImage}
+                />
+                <Text style={styles.characterName}>{item.name}</Text>
               </TouchableOpacity>
-            </View>
-          )}
-        />
-      </View>
-    </ImageBackground>
+            )}
+          />
+
+          <Image
+            source={require("../../assets/SeachResults.png")}
+            style={styles.image}
+          />
+
+          <Text>
+            Selected Character:{" "}
+            {selectedCharacter ? selectedCharacter.name : ""}
+          </Text>
+          <FlatList
+            data={filteredUsers}
+            keyExtractor={(user) => user.id}
+            renderItem={({ item }) => (
+              <View style={styles.userItem}>
+                <Text style={styles.userText}>Name: {item.name}</Text>
+                <Text style={styles.userText}>CFN Name: {item.cfnName}</Text>
+                <TouchableOpacity
+                  style={styles.viewProfileButton}
+                  onPress={() => navigateToUserProfile(item)}
+                >
+                  <Text style={styles.viewProfileButtonText}>View Profile</Text>
+                </TouchableOpacity>
+              </View>
+            )}
+          />
+        </View>
+      </ImageBackground>
+    </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
+    flexGrow: 1,
+  },
+  content: {
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
@@ -472,7 +521,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     paddingHorizontal: 10,
   },
-
   viewProfileButton: {
     backgroundColor: "purple",
     padding: 8,
@@ -486,7 +534,10 @@ const styles = StyleSheet.create({
   backgroundImage: {
     flex: 1, // Take up the full screen height
     resizeMode: "cover", // Cover the entire view
+    width: "100%",
+    height: "100%",
   },
+  image: {},
 });
 
 export default YourComponent;

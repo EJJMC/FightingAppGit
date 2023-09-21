@@ -122,24 +122,22 @@ const CustomHeader = ({ navigation, routeName }) => {
             console.log("Results icon pressed!");
           }}
         >
-          <Ionicons name="star-outline" size={24} color="#000000" />
+          <Ionicons name="star-outline" size={24} color="#FFFFFF" />
         </TouchableOpacity>
       )}
       <TouchableOpacity
         onPress={() => {
-          // Handle icon press here for the common icon (e.g., settings)
           navigation.navigate("Settings");
         }}
       >
-        <Ionicons name="settings-outline" size={24} color="#000000" />
+        <Ionicons name="chatbox-ellipses-outline" size={24} color="#FFFFFF" />
       </TouchableOpacity>
       <TouchableOpacity
         onPress={() => {
-          // Handle icon press here for the common icon (e.g., settings)
           navigation.navigate("UserProfile");
         }}
       >
-        <Ionicons name="settings-outline" size={24} color="#000000" />
+        <Ionicons name="person-outline" size={24} color="#FFFFFF" />
       </TouchableOpacity>
     </View>
   );
@@ -167,17 +165,14 @@ export default function MainContainer() {
   );
 }
 function CustomTabBarBackground({ state, descriptors, navigation }) {
-  // Define an array of screen names where you want to hide the tab bar
-  const screensWithHiddenTabBar = [loginName, RegName]; // Add screen names here
+  const screensWithHiddenTabBar = [loginName, RegName];
 
-  // Check if the current screen name is in the array of screens to hide the tab bar
   const shouldHideTabBar = screensWithHiddenTabBar.includes(
     state.routes[state.index].name
   );
 
-  // If shouldHideTabBar is true, don't render the tab bar
   if (shouldHideTabBar) {
-    return null; // Return null to hide the tab bar
+    return null;
   }
 
   return (
@@ -204,9 +199,11 @@ function CustomTabBarBackground({ state, descriptors, navigation }) {
           if (route.name === homeName) {
             iconName = isFocused ? "home" : "home-outline";
           } else if (route.name === detailsName) {
-            iconName = isFocused ? "list" : "list-outline";
+            iconName = isFocused ? "search" : "search-outline";
           } else if (route.name === profileName) {
-            iconName = isFocused ? "settings" : "settings-outline";
+            iconName = isFocused
+              ? "game-controller"
+              : "game-controller-outline";
           }
 
           return (
@@ -214,7 +211,7 @@ function CustomTabBarBackground({ state, descriptors, navigation }) {
               key={route.key}
               name={iconName}
               size={24}
-              color={isFocused ? "#000000" : "#999999"}
+              color={isFocused ? "#FFFFFF" : "#999999"}
               onPress={() => {
                 const event = navigation.emit({
                   type: "tabPress",
@@ -248,7 +245,14 @@ function TabNavigator({ navigation, route }) {
         component={HomeScreen}
         options={{
           headerShown: true,
-          headerTitle: "cooking with gas",
+          headerTitle: "",
+
+          headerBackground: () => (
+            <Image
+              style={{ flex: 1, width: "100%", height: "100%" }}
+              source={require("../assets/topBar.png")}
+            />
+          ),
           headerRight: () => (
             <CustomHeader
               navigation={navigation}
@@ -257,12 +261,20 @@ function TabNavigator({ navigation, route }) {
           ),
         }}
       />
+
       <Tab.Screen
         name={detailsName}
         component={DetailsScreen}
         options={{
           headerShown: true,
-          headerTitle: "cooking with gas",
+          headerTitle: "Search For Player",
+
+          headerBackground: () => (
+            <Image
+              style={{ flex: 1, width: "100%", height: "100%" }}
+              source={require("../assets/topBar.png")}
+            />
+          ),
           headerRight: () => (
             <CustomHeader
               navigation={navigation}
@@ -281,7 +293,14 @@ function TabNavigator({ navigation, route }) {
         component={ProfileScreen}
         options={{
           headerShown: false,
-          headerTitle: "cooking with gas",
+          headerTitle: "",
+
+          headerBackground: () => (
+            <Image
+              style={{ flex: 1, width: "100%", height: "100%" }}
+              source={require("../assets/topBar.png")}
+            />
+          ),
           headerRight: () => (
             <CustomHeader
               navigation={navigation}
@@ -310,7 +329,7 @@ const styles = StyleSheet.create({
   tabBarBackground: {
     position: "relative",
     zIndex: 0,
-    height: 56, // Adjust the height as needed
+    height: 50,
   },
   tabBarBackgroundImage: {
     position: "absolute",
