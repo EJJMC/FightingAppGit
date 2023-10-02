@@ -453,14 +453,42 @@ const YourComponent = () => {
             keyExtractor={(user) => user.id}
             renderItem={({ item }) => (
               <View style={styles.userItem}>
-                <Text style={styles.userText}>Name: {item.name}</Text>
-                <Text style={styles.userText}>CFN Name: {item.cfnName}</Text>
-                <TouchableOpacity
-                  style={styles.viewProfileButton}
-                  onPress={() => navigateToUserProfile(item)}
-                >
-                  <Text style={styles.viewProfileButtonText}>View Profile</Text>
-                </TouchableOpacity>
+                <View style={styles.avatarContainer}>
+                  <Image
+                    source={{ uri: item.photoUrl }}
+                    style={{ ...styles.avatar, width: 80, height: 80 }}
+                  />
+                </View>
+                <View style={styles.characterInfoContainer}>
+                  {characters.map((character) => {
+                    if (character.name === item.name) {
+                      return (
+                        <Image
+                          key={character.name}
+                          source={character.imageSource}
+                          style={styles.characterImage}
+                        />
+                      );
+                    }
+                  })}
+                  <Text style={styles.characterName}>{item.name}</Text>
+                </View>
+                <View>
+                  <Text style={styles.userText}> {item.cfnName}</Text>
+                  <Text style={styles.userText}>Rank: {item.rank}</Text>
+                  <Text style={styles.userText}>Goal: {item.goal}</Text>
+                  <TouchableOpacity
+                    style={[
+                      styles.viewProfileButton,
+                      { width: 100, height: 40 },
+                    ]}
+                    onPress={() => navigateToUserProfile(item)}
+                  >
+                    <Text style={styles.viewProfileButtonText}>
+                      View Profile
+                    </Text>
+                  </TouchableOpacity>
+                </View>
               </View>
             )}
           />
@@ -495,15 +523,32 @@ const styles = StyleSheet.create({
     marginTop: 5,
   },
   userItem: {
-    marginTop: 10,
-    padding: 10,
-    borderWidth: 1,
-    borderColor: "#ccc",
+    marginTop: 5,
+    padding: 5,
+    borderWidth: 3,
+    borderColor: "purple",
     borderRadius: 8,
-    color: "white",
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#000000",
+    marginBottom: 5,
+  },
+  avatarContainer: {
+    marginRight: 10,
+  },
+  avatar: {
+    width: 50,
+    height: 50,
+    borderRadius: 50,
+    borderColor: "purple",
   },
   userText: {
     color: "white",
+    borderRadius: 82,
+    marginBottom: 10,
+    padding: 8,
+    alignItems: "center",
+    backgroundColor: "#9B56BC",
   },
   picker: {
     borderWidth: 1,
@@ -522,18 +567,19 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
   },
   viewProfileButton: {
-    backgroundColor: "purple",
-    padding: 8,
+    backgroundColor: "#610FB2",
+    padding: 4,
     borderRadius: 8,
-    marginTop: 8,
+    marginTop: 5,
+    marginBottom: 10,
   },
   viewProfileButtonText: {
     color: "white",
     fontWeight: "bold",
   },
   backgroundImage: {
-    flex: 1, // Take up the full screen height
-    resizeMode: "cover", // Cover the entire view
+    flex: 1,
+    resizeMode: "cover",
     width: "100%",
     height: "100%",
   },

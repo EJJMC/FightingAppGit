@@ -3,12 +3,15 @@ import {
   View,
   Text,
   StyleSheet,
-  FlatList,
   TouchableOpacity,
+  ImageBackground,
+  ScrollView,
 } from "react-native";
-import { collection, query, where, getDocs } from "firebase/firestore";
+import { collection, query, where, getDocs, orderBy } from "firebase/firestore";
 import { db, auth } from "../../firebase";
 import { useNavigation } from "@react-navigation/native";
+import { Avatar } from "react-native-elements";
+import bgImage from "../../assets/SearchBackground.png";
 
 const UserListScreen = () => {
   const navigation = useNavigation();
@@ -20,6 +23,7 @@ const UserListScreen = () => {
         // Create a query to get the users that the current user has messaged
         const messagesQuery = query(
           collection(db, "Newmessages"),
+          orderBy("timestamp", "desc"),
           where("senderUid", "==", auth.currentUser.uid)
         );
 
@@ -82,70 +86,94 @@ const UserListScreen = () => {
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Choose a User to Message</Text>
-      <FlatList
-        data={usersWithLastMessages}
-        keyExtractor={(user) => user.uid}
-        renderItem={({ item }) => (
-          <TouchableOpacity onPress={() => handleUserPress(item)}>
-            <View style={styles.userContainer}>
-              <Text style={styles.userName}>{item.cfnName}</Text>
-              <Text style={styles.lastMessage}>{item.lastMessage}</Text>
+    <ImageBackground source={bgImage} style={styles.backgroundImage}>
+      <ScrollView contentContainerStyle={styles.container}>
+        <Text style={styles.title}>Choose a User to Message</Text>
+        {usersWithLastMessages.map((user, index) => (
+          <TouchableOpacity key={index} onPress={() => handleUserPress(user)}>
+            <View style={styles.userText}>
+              <Avatar
+                source={{ uri: user.photoUrl }}
+                style={styles.userProfileImage}
+                rounded
+                onError={(error) => console.error("Image load error:", error)}
+              />
+
+              <Text style={styles.userName}>{user.cfnName}</Text>
+
+              <Text style={styles.lastMessage}>{user.lastMessage}</Text>
             </View>
           </TouchableOpacity>
-        )}
-      />
-    </View>
+        ))}
+      </ScrollView>
+    </ImageBackground>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    padding: 20,
+    flexGrow: 1,
   },
   title: {
     fontSize: 24,
     fontWeight: "bold",
     marginBottom: 20,
-  },
-  userContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: 10,
+    color: "white",
   },
   userName: {
     fontSize: 18,
-    color: "#0782F9",
+    color: "white",
   },
   lastMessage: {
     fontSize: 14,
     color: "#555",
   },
+  userProfileImage: {
+    width: 50,
+    height: 50,
+    borderRadius: 25, // Assuming the profile picture is circular
+  },
+  backgroundImage: {
+    flex: 1,
+    resizeMode: "cover",
+    width: "100%",
+    height: "100%",
+  },
+  userText: {
+    color: "white",
+    borderRadius: 8,
+    marginBottom: 10,
+    padding: 8,
+    borderWidth: 3,
+    borderColor: "purple",
+    borderRadius: 8,
+    alignItems: "center",
+    backgroundColor: "#000000",
+  },
 });
 
 export default UserListScreen;
 
-// import React, { useState, useEffect } from "react";
+// import React, { useEffect, useState } from "react";
 // import {
 //   View,
 //   Text,
-//   FlatList,
 //   StyleSheet,
+//   FlatList,
 //   TouchableOpacity,
 // } from "react-native";
 // import {
 //   collection,
 //   query,
 //   where,
-//   orderBy,
-//   onSnapshot,
+//   getDocs,
 //   doc,
 //   getDoc,
+//   orderBy,
 // } from "firebase/firestore";
 // import { db, auth } from "../../firebase";
+// import { useNavigation } from "@react-navigation/native";
+// import { Avatar } from "react-native-elements";
 
 // const ChatHistoryScreen = ({ navigation }) => {
 //   const [chatHistory, setChatHistory] = useState([]);
@@ -155,69 +183,67 @@ export default UserListScreen;
 //   };
 
 //   useEffect(() => {
-//     // Create a query to fetch the latest message for each user
-//     const messagesQuery = query(
-//       collection(db, "Newmessages"),
-//       orderBy("timestamp", "desc"), // Order messages by timestamp in descending order
-//       where("senderUid", "==", auth.currentUser.uid) // Sent messages
-//     );
+//     const fetchChatHistory = async () => {
+//       try {
+//         // Create a query to fetch the chat history from the "Newmessages" collection
+//         const messagesQuery = query(
+//           collection(db, "Newmessages"),
+//           orderBy("timestamp", "desc"),
+//           where("senderUid", "==", auth.currentUser.uid)
+//         );
 
-//     const latestMessages = {}; // To store the latest message for each user
+//         const querySnapshot = await getDocs(messagesQuery);
 
-//     const unsubscribe = onSnapshot(messagesQuery, async (querySnapshot) => {
-//       querySnapshot.forEach((doc) => {
-//         const recipientUid = doc.data().recipientUid;
-
-//         if (!latestMessages[recipientUid]) {
-//           latestMessages[recipientUid] = {
-//             id: doc.id,
-//             content: doc.data().content,
-//           };
-//         }
-//       });
-
-//       // Convert the latestMessages object to an array
-//       const chatHistoryData = await Promise.all(
-//         Object.keys(latestMessages).map(async (recipientUid) => {
-//           const displayName = await getDisplayName(recipientUid);
+//         const chatHistoryData = querySnapshot.docs.map((doc) => {
+//           const data = doc.data();
 //           return {
-//             recipientUid,
-//             displayName,
-//             ...latestMessages[recipientUid],
+//             id: doc.id,
+//             recipientUid: data.recipientUid,
+//             content: data.content,
+//             timestamp: data.timestamp,
 //           };
-//         })
-//       );
+//         });
 
-//       setChatHistory(chatHistoryData);
-//     });
+//         // Fetch sender's and recipient's profile picture URLs from the "users" collection
+//         const promises = chatHistoryData.map(async (message) => {
+//           const senderDoc = await getDoc(
+//             doc(db, "users", auth.currentUser.uid)
+//           );
+//           const recipientDoc = await getDoc(
+//             doc(db, "users", message.recipientUid)
+//           );
 
-//     return () => {
-//       unsubscribe();
-//     };
-//   }, []);
+//           return {
+//             ...message,
+//             senderPhotoUrl: senderDoc.data().photoUrl,
+//             recipientPhotoUrl: recipientDoc.data().photoUrl,
+//           };
+//         });
 
-//   // Function to get the display name based on the UID
-//   const getDisplayName = async (uid) => {
-//     try {
-//       const userDoc = doc(db, "users", uid);
-//       const userSnap = await getDoc(userDoc);
-//       if (userSnap.exists()) {
-//         return userSnap.data().cfnName;
+//         const chatHistoryWithProfileUrls = await Promise.all(promises);
+
+//         setChatHistory(chatHistoryWithProfileUrls);
+//       } catch (error) {
+//         console.error("Error fetching chat history:", error);
 //       }
-//     } catch (error) {
-//       console.error("Error fetching display name:", error);
-//     }
-//     return "Unknown";
-//   };
+//     };
+
+//     fetchChatHistory();
+//   }, []);
 
 //   return (
 //     <View style={styles.container}>
 //       <FlatList
 //         data={chatHistory}
-//         keyExtractor={(item) => item.recipientUid}
+//         keyExtractor={(item) => item.id}
 //         renderItem={({ item }) => (
 //           <TouchableOpacity onPress={() => navigateToChat(item)}>
 //             <View style={styles.messageContainer}>
+//               <Avatar
+//                 source={{ uri: item.recipientPhotoUrl }}
+//                 style={styles.userProfileImage}
+//                 onError={(error) => console.error("Image load error:", error)}
+//               />
 //               <Text style={styles.messageText}>To: {item.displayName}</Text>
 //               <Text style={styles.messageText}>
 //                 Latest Message: {item.content}
@@ -233,15 +259,22 @@ export default UserListScreen;
 // const styles = StyleSheet.create({
 //   container: {
 //     flex: 1,
-//     padding: 16,
+//     padding: 20,
 //   },
 //   messageContainer: {
-//     marginVertical: 4,
+//     flexDirection: "row",
+//     justifyContent: "space-between",
+//     alignItems: "center",
+//     marginBottom: 10,
+//   },
+//   userProfileImage: {
+//     width: 50,
+//     height: 50,
+//     borderRadius: 25, // Assuming the profile picture is circular
 //   },
 //   messageText: {
-//     padding: 8,
-//     borderRadius: 8,
-//     maxWidth: "70%",
+//     flex: 1,
+//     marginLeft: 10,
 //   },
 // });
 

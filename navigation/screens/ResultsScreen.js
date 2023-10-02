@@ -1,7 +1,16 @@
 import React from "react";
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  ImageBackground,
+  Image,
+  ScrollView,
+} from "react-native";
 import { Avatar } from "react-native-elements";
-import { WebView } from "react-native-webview";
+import bgImage from "../../assets/SearchBackground.png";
+import { Ionicons } from "@expo/vector-icons";
 
 const ResultsScreen = ({ route, navigation }) => {
   const { user } = route.params;
@@ -11,46 +20,64 @@ const ResultsScreen = ({ route, navigation }) => {
   };
 
   return (
-    <View style={styles.container}>
-      <Avatar
-        source={{ uri: user.photoUrl }}
-        rounded
-        size="large"
-        containerStyle={styles.avatar}
-      />
-      <Text style={styles.text}>Username: {user.username}</Text>
-      <Text style={styles.text}>Name: {user.name}</Text>
-      <Text style={styles.text}>Timezone: {user.timezone}</Text>
-      <Text style={styles.text}>Goal: {user.goal}</Text>
-      <Text style={styles.text}>CFN Name: {user.cfnName}</Text>
-      <View style={styles.socialMediaContainer}>
-        <Text style={styles.text}>Social Media:</Text>
-        {Object.entries(user.socialMedia).map(([platform, value], index) => (
-          <Text key={index} style={styles.text}>
-            {platform}: {value}
-          </Text>
-        ))}
-      </View>
-      <Text style={styles.text}>Rank: {user.rank}</Text>
+    <ImageBackground source={bgImage} style={styles.backgroundImage}>
+      <ScrollView contentContainerStyle={styles.scrollContainer}>
+        <View style={styles.container}>
+          <View style={styles.headerContainer}>
+            <Avatar
+              source={{ uri: user.photoUrl }}
+              rounded
+              size="xlarge"
+              containerStyle={styles.avatar}
+            />
+            <TouchableOpacity onPress={() => handleSendMessage(user)}>
+              <Ionicons name="mail-outline" size={54} color="#FFFFFF" />
+            </TouchableOpacity>
+          </View>
+          <View style={styles.cfnContainer}>
+            <Ionicons name="earth-outline" size={24} color="#FFFFFF" />
+            <Text style={styles.text}>{user.timezone}</Text>
+          </View>
+          <View style={styles.Container}>
+            <Text style={styles.text}> {user.username}</Text>
+          </View>
+          <Image source={require("../../assets/Line.png")} />
+          <View style={styles.Container}>
+            <Text style={styles.text}>CFN Name: {user.cfnName}</Text>
+            <Text style={styles.text}>CFN Number: {user.cfnName}</Text>
+          </View>
+          <Image source={require("../../assets/Line.png")} />
+          <View style={styles.Container}>
+            <Text style={styles.text}>Main Character: {user.name}</Text>
+            <Text style={styles.text}>Rank: {user.rank}</Text>
+            <Text style={styles.text}>Goal: {user.goal}</Text>
+          </View>
+          <Image source={require("../../assets/Line.png")} />
 
-      {/* Display YouTube video using <iframe> tag */}
-      {user.youtubeVideo && (
-        <iframe
-          width="300"
-          height="200"
-          src={user.youtubeVideo}
-          frameborder="0"
-          allowfullscreen
-        ></iframe>
-      )}
+          <View style={styles.socialMediaContainer}>
+            <Text style={styles.text}>Social Media:</Text>
+            {Object.entries(user.socialMedia).map(
+              ([platform, value], index) => (
+                <Text key={index} style={styles.text}>
+                  {platform}: {value}
+                </Text>
+              )
+            )}
+          </View>
 
-      <TouchableOpacity
-        style={styles.messageButton}
-        onPress={() => handleSendMessage(user)}
-      >
-        <Text style={styles.buttonText}>Message</Text>
-      </TouchableOpacity>
-    </View>
+          {user.youtubeVideo && (
+            <iframe
+              width="300"
+              height="200"
+              src={user.youtubeVideo}
+              frameborder="0"
+              allowfullscreen
+            ></iframe>
+          )}
+          <Image source={require("../../assets/Line.png")} />
+        </View>
+      </ScrollView>
+    </ImageBackground>
   );
 };
 
@@ -60,9 +87,22 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
+  headerContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 0,
+    justifyContent: "space-between",
+    width: "50%",
+  },
+  cfnContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    width: "20%",
+  },
   text: {
     fontSize: 18,
     marginBottom: 10,
+    color: "white",
   },
   socialMediaContainer: {
     marginBottom: 10,
@@ -85,6 +125,15 @@ const styles = StyleSheet.create({
     width: 300,
     height: 200,
     marginVertical: 10,
+  },
+  backgroundImage: {
+    flex: 1,
+    resizeMode: "cover",
+    width: "100%",
+    height: "100%",
+  },
+  scrollContainer: {
+    flexGrow: 1,
   },
 });
 

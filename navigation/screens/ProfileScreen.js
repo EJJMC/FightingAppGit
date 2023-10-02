@@ -38,7 +38,7 @@ const WebBrowserScreen = () => {
             "Connect your gaming controller via bluetooth to your mobile device ",
         },
         {
-          backgroundColor: "#fff",
+          backgroundColor: "#B7410E",
           image: <Image source={require("../../assets/39168-200.png")} />,
           title: "Phone Orientation",
           subtitle: "Rotate your phone 180 sideways ",
