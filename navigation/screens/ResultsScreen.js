@@ -12,12 +12,25 @@ import { Avatar } from "react-native-elements";
 import bgImage from "../../assets/SearchBackground.png";
 import { Ionicons } from "@expo/vector-icons";
 
+import YouTubeIframe from "react-native-youtube-iframe";
+
 const ResultsScreen = ({ route, navigation }) => {
   const { user } = route.params;
 
   const handleSendMessage = (user) => {
     navigation.navigate("Messages", { user });
   };
+
+  // Function to extract video ID from YouTube URL
+  const extractVideoId = (url) => {
+    const match = url.match(
+      /(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?feature=player_embedded&v=))([^&\n?#]+)/
+    );
+    return match && match[1];
+  };
+
+  // Extract video ID from user.youtubeVideo
+  const videoId = user.youtubeVideo ? extractVideoId(user.youtubeVideo) : null;
 
   return (
     <ImageBackground source={bgImage} style={styles.backgroundImage}>
@@ -65,15 +78,21 @@ const ResultsScreen = ({ route, navigation }) => {
             )}
           </View>
 
-          {user.youtubeVideo && (
-            <iframe
-              width="300"
-              height="200"
-              src={user.youtubeVideo}
-              frameborder="0"
-              allowfullscreen
-            ></iframe>
-          )}
+          {/* {videoId && (
+            <YouTubeIframe
+              videoId={videoId}
+              height={200}
+              width={300}
+              play={false}
+              onChangeState={(event) => {
+                if (event === "ended") {
+                  // Video ended
+                  console.log("Video ended");
+                }
+              }}
+            />
+          )} */}
+
           <Image source={require("../../assets/Line.png")} />
         </View>
       </ScrollView>

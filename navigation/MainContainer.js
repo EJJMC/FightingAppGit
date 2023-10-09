@@ -146,7 +146,17 @@ const CustomHeader = ({ navigation, routeName }) => {
 export default function MainContainer() {
   return (
     <NavigationContainer>
-      <Stack.Navigator>
+      <Stack.Navigator
+        screenOptions={{
+          headerStyle: {
+            backgroundColor: "black", // Set the header background color to black
+          },
+          headerTitleStyle: {
+            color: "white", // Set the header text color to white
+          },
+          headerTintColor: "white", // Set the back arrow color to white
+        }}
+      >
         <Stack.Screen
           name="TabNavigator"
           component={TabNavigator}
@@ -157,13 +167,45 @@ export default function MainContainer() {
         <Stack.Screen name={profileName} component={ProfileScreen} />
         <Stack.Screen name={loginName} component={LoginScreen} />
         <Stack.Screen name={RegName} component={RegistrationScreen} />
-        <Stack.Screen name={resultsName} component={ResultsScreen} />
-        <Stack.Screen name={settingsName} component={SettingsScreen} />
-        <Stack.Screen name={UserProfileName} component={UserProfileScreen} />
+        <Stack.Screen
+          name={resultsName}
+          component={ResultsScreen}
+          options={{
+            headerTitle: "Search Results",
+          }}
+        />
+
+        <Stack.Screen
+          name={UserProfileName}
+          component={UserProfileScreen}
+          options={{
+            headerTitle: "View/Edit Your Profile",
+            headerBackground: () => (
+              <Image
+                style={{ flex: 1, width: "100%", height: "100%" }}
+                source={require("../assets/topBar.png")}
+              />
+            ),
+          }}
+        />
+        <Stack.Screen
+          name={settingsName}
+          component={SettingsScreen}
+          options={{
+            headerTitle: "Previous Messages",
+            headerBackground: () => (
+              <Image
+                style={{ flex: 1, width: "100%", height: "100%" }}
+                source={require("../assets/topBar.png")}
+              />
+            ),
+          }}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );
 }
+
 function CustomTabBarBackground({ state, descriptors, navigation }) {
   const screensWithHiddenTabBar = [loginName, RegName];
 
@@ -245,7 +287,8 @@ function TabNavigator({ navigation, route }) {
         component={HomeScreen}
         options={{
           headerShown: true,
-          headerTitle: "",
+          headerTintColor: "white",
+          headerTitle: "Latest FGC News",
 
           headerBackground: () => (
             <Image
@@ -268,10 +311,11 @@ function TabNavigator({ navigation, route }) {
         options={{
           headerShown: true,
           headerTitle: "Search For Player",
+          headerTintColor: "white",
 
           headerBackground: () => (
             <Image
-              style={{ flex: 1, width: "100%", height: "100%" }}
+              style={{ flex: 1, width: "100%", height: "100%", color: "white" }}
               source={require("../assets/topBar.png")}
             />
           ),
@@ -313,7 +357,24 @@ function TabNavigator({ navigation, route }) {
       <Tab.Screen
         name={resultsName}
         component={ResultsScreen}
-        options={{ headerShown: true }}
+        options={{
+          headerShown: true,
+          headerTitle: "Search Results",
+          headerTintColor: "white",
+
+          headerBackground: () => (
+            <Image
+              style={{ flex: 1, width: "100%", height: "100%", color: "white" }}
+              source={require("../assets/topBar.png")}
+            />
+          ),
+          headerRight: () => (
+            <CustomHeader
+              navigation={navigation}
+              routeName={currentRouteName}
+            />
+          ),
+        }}
       />
 
       <Tab.Screen

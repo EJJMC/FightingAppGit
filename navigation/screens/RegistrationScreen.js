@@ -131,6 +131,8 @@ const RegistrationScreen = () => {
                 <Picker.Item label="Chun-Li" value="Chun-Li" />
                 <Picker.Item label="Jamie" value="Jamie" />
                 <Picker.Item label="Luke" value="Luke" />
+                <Picker.Item label="Rashid" value="Rashid" />
+                <Picker.Item label="A.K.I" value="A.K.I" />
               </Picker>
             </ScrollView>
 

@@ -6,6 +6,8 @@ import {
   TouchableOpacity,
   TextInput,
   FlatList,
+  Image,
+  ImageBackground,
 } from "react-native";
 import {
   collection,
@@ -15,14 +17,20 @@ import {
   query,
   where,
   orderBy,
+  getDoc,
+  doc,
 } from "firebase/firestore";
 import { db, auth } from "../../firebase";
+import { useNavigation } from "@react-navigation/native"; // Import the useNavigation hook
+import bgImage from "../../assets/SearchBackground.png";
 
-const MessageScreen = ({ route, navigation }) => {
+const MessageScreen = ({ route }) => {
   const { user } = route.params;
+  const navigation = useNavigation(); // Initialize the navigation hook
 
   const [message, setMessage] = useState(""); // State to hold the message text
   const [messages, setMessages] = useState([]); // State to hold the list of messages
+  const [messagedUser, setMessagedUser] = useState(null); // State to hold messaged user data
 
   // Function to send a message
   const sendMessage = async () => {
@@ -41,6 +49,14 @@ const MessageScreen = ({ route, navigation }) => {
       setMessage(""); // Clear the message input field
     } catch (error) {
       console.error("Error sending message:", error);
+    }
+  };
+
+  // Function to navigate to the user's profile
+  const navigateToUserProfile = () => {
+    // Check if messagedUser exists before navigating
+    if (messagedUser) {
+      navigation.navigate("Results", { user: messagedUser });
     }
   };
 
@@ -69,75 +85,160 @@ const MessageScreen = ({ route, navigation }) => {
       setMessages(newMessages);
     });
 
+    // Fetch messaged user data
+    const fetchMessagedUserData = async () => {
+      try {
+        // Fetch user data for the messaged user
+        const messagedUserDoc = await getDoc(doc(db, "users", user.uid));
+        if (messagedUserDoc.exists()) {
+          setMessagedUser(messagedUserDoc.data());
+        } else {
+          console.error("Messaged user not found.");
+        }
+      } catch (error) {
+        console.error("Error fetching messaged user data:", error);
+      }
+    };
+
+    fetchMessagedUserData();
+
     return () => {
-      // Unsubscribe from the snapshot listener when the component unmounts
       unsubscribe();
     };
-  }, []); // Run this effect once on component mount
+  }, [user]);
 
   return (
-    <View style={styles.container}>
-      {/* Chat messages */}
-      <FlatList
-        data={messages}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item }) => (
-          <View
-            style={[
-              styles.messageContainer,
-              {
-                alignSelf:
-                  item.senderUid === auth.currentUser.uid
-                    ? "flex-end"
-                    : "flex-start",
-              },
-            ]}
-          >
-            <Text
+    <ImageBackground source={bgImage} style={styles.backgroundImage}>
+      <View style={styles.container}>
+        <View style={styles.profileContainer}>
+          {/* Wrap the profile image with a TouchableOpacity */}
+          <TouchableOpacity onPress={navigateToUserProfile}>
+            {/* Display the profile image of the messaged user if it exists */}
+            {messagedUser && messagedUser.photoUrl && (
+              <Image
+                source={{ uri: messagedUser.photoUrl }}
+                style={styles.profileImage}
+              />
+            )}
+          </TouchableOpacity>
+        </View>
+
+        {/* Chat messages */}
+        <FlatList
+          data={messages}
+          keyExtractor={(item) => item.id}
+          renderItem={({ item }) => (
+            <View
               style={[
-                styles.messageText,
+                styles.messageContainer,
                 {
-                  backgroundColor:
+                  alignSelf:
                     item.senderUid === auth.currentUser.uid
-                      ? "#0782F9" // Your sent message background color
-                      : "#ccc", // Recipient's message background color
-                  color:
-                    item.senderUid === auth.currentUser.uid ? "white" : "black",
+                      ? "flex-end"
+                      : "flex-start",
                 },
               ]}
             >
-              {item.content}
-            </Text>
-          </View>
-        )}
-      />
+              {item.senderUid !== auth.currentUser.uid &&
+                // Check if messagedUser exists and has a photoUrl before rendering
+                messagedUser &&
+                messagedUser.photoUrl && (
+                  <Image
+                    source={{ uri: messagedUser.photoUrl }}
+                    style={styles.senderImage}
+                  />
+                )}
+              <Text
+                style={[
+                  styles.messageText,
+                  {
+                    backgroundColor:
+                      item.senderUid === auth.currentUser.uid
+                        ? "#610FB2" // Your sent message background color
+                        : "#ccc", // Recipient's message background color
+                    color:
+                      item.senderUid === auth.currentUser.uid
+                        ? "white"
+                        : "black",
+                  },
+                ]}
+              >
+                {item.content}
+              </Text>
+            </View>
+          )}
+        />
 
-      {/* Message input */}
-      <TextInput
-        placeholder="Type your message..."
-        value={message}
-        onChangeText={(text) => setMessage(text)}
-        style={styles.messageInput}
-      />
+        <TextInput
+          placeholder="Type your message..."
+          placeholderTextColor="white" // Set the placeholder text color to white
+          value={message}
+          onChangeText={(text) => setMessage(text)}
+          style={styles.messageInput}
+        />
 
-      {/* Send button */}
-      <TouchableOpacity style={styles.sendButton} onPress={sendMessage}>
-        <Text style={styles.sendButtonText}>Send</Text>
-      </TouchableOpacity>
-    </View>
+        <TouchableOpacity style={styles.sendButton} onPress={sendMessage}>
+          <Text style={styles.sendButtonText}>Send</Text>
+        </TouchableOpacity>
+      </View>
+    </ImageBackground>
   );
 };
 
 const styles = StyleSheet.create({
-  // ...other styles...
-
+  container: {
+    flex: 1,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+  },
+  profileContainer: {
+    alignItems: "center",
+  },
+  profileImage: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    marginBottom: 16,
+  },
   messageContainer: {
+    flexDirection: "row",
+    alignItems: "center",
     marginVertical: 4,
+  },
+  senderImage: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    marginRight: 8,
   },
   messageText: {
     padding: 8,
-    borderRadius: 8,
-    maxWidth: "70%",
+    borderRadius: 80,
+    maxWidth: "80%",
+  },
+  messageInput: {
+    borderWidth: 1,
+    borderColor: "#ccc",
+    borderRadius: 80,
+    padding: 8,
+    marginBottom: 8,
+    color: "white",
+  },
+  sendButton: {
+    backgroundColor: "#610FB2",
+    padding: 12,
+    borderRadius: 80,
+    alignItems: "center",
+  },
+  sendButtonText: {
+    color: "white",
+    fontWeight: "bold",
+  },
+  backgroundImage: {
+    flex: 1,
+    resizeMode: "cover",
+    width: "100%",
+    height: "100%",
   },
 });
 
