@@ -11,7 +11,8 @@
   "dependencies": {
     "@expo/webpack-config": "^18.0.1",
     "@react-native-community/masked-view": "^0.1.11",
-    "@react-native-firebase/storage": "^18.3.0",
+    "@react-native-firebase/app": "^18.5.0",
+    "@react-native-firebase/storage": "^18.5.0",
     "@react-native-picker/picker": "2.4.8",
     "@react-navigation/bottom-tabs": "^6.5.8",
     "@react-navigation/native": "^6.1.7",
@@ -43,8 +44,7 @@
     "react-native-web": "^0.18.12",
     "react-native-web-webview": "^1.0.2",
     "react-native-webview": "11.26.0",
-    "react-native-youtube": "^2.0.2",
-    "react-native-youtube-iframe": "^2.3.0"
+    "react-native-youtube": "^2.0.2"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0"

@@ -121,6 +121,7 @@ const CustomHeader = ({ navigation, routeName }) => {
           onPress={() => {
             console.log("Results icon pressed!");
           }}
+          style={styles.iconButton}
         >
           <Ionicons name="star-outline" size={24} color="#FFFFFF" />
         </TouchableOpacity>
@@ -129,6 +130,7 @@ const CustomHeader = ({ navigation, routeName }) => {
         onPress={() => {
           navigation.navigate("Settings");
         }}
+        style={styles.iconButton}
       >
         <Ionicons name="chatbox-ellipses-outline" size={24} color="#FFFFFF" />
       </TouchableOpacity>
@@ -136,6 +138,7 @@ const CustomHeader = ({ navigation, routeName }) => {
         onPress={() => {
           navigation.navigate("UserProfile");
         }}
+        style={styles.iconButton}
       >
         <Ionicons name="person-outline" size={24} color="#FFFFFF" />
       </TouchableOpacity>
@@ -180,10 +183,11 @@ export default function MainContainer() {
           component={UserProfileScreen}
           options={{
             headerTitle: "View/Edit Your Profile",
+            headerTitleStyle: { fontSize: 13 },
             headerBackground: () => (
               <Image
                 style={{ flex: 1, width: "100%", height: "100%" }}
-                source={require("../assets/topBar.png")}
+                source={require("../assets/TopNavBar.png")}
               />
             ),
           }}
@@ -193,10 +197,11 @@ export default function MainContainer() {
           component={SettingsScreen}
           options={{
             headerTitle: "Previous Messages",
+            headerTitleStyle: { fontSize: 13 },
             headerBackground: () => (
               <Image
                 style={{ flex: 1, width: "100%", height: "100%" }}
-                source={require("../assets/topBar.png")}
+                source={require("../assets/TopNavBar.png")}
               />
             ),
           }}
@@ -293,7 +298,7 @@ function TabNavigator({ navigation, route }) {
           headerBackground: () => (
             <Image
               style={{ flex: 1, width: "100%", height: "100%" }}
-              source={require("../assets/topBar.png")}
+              source={require("../assets/TopNavBar.png")}
             />
           ),
           headerRight: () => (
@@ -316,7 +321,7 @@ function TabNavigator({ navigation, route }) {
           headerBackground: () => (
             <Image
               style={{ flex: 1, width: "100%", height: "100%", color: "white" }}
-              source={require("../assets/topBar.png")}
+              source={require("../assets/TopNavBar.png")}
             />
           ),
           headerRight: () => (
@@ -342,7 +347,7 @@ function TabNavigator({ navigation, route }) {
           headerBackground: () => (
             <Image
               style={{ flex: 1, width: "100%", height: "100%" }}
-              source={require("../assets/topBar.png")}
+              source={require("../assets/TopNavBar.png")}
             />
           ),
           headerRight: () => (
@@ -365,7 +370,7 @@ function TabNavigator({ navigation, route }) {
           headerBackground: () => (
             <Image
               style={{ flex: 1, width: "100%", height: "100%", color: "white" }}
-              source={require("../assets/topBar.png")}
+              source={require("../assets/TopNavBar.png")}
             />
           ),
           headerRight: () => (
@@ -405,5 +410,11 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%",
     backgroundColor: "transparent",
+  },
+  iconButton: {
+    marginRight: 50,
+  },
+  headerTitle: {
+    fontSize: 16,
   },
 });

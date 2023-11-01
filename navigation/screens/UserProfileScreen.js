@@ -103,6 +103,10 @@ import { Picker } from "@react-native-picker/picker";
 import { Avatar } from "react-native-elements";
 import bgImage from "../../assets/blue.png";
 import { Ionicons } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/native";
+import { CommonActions } from "@react-navigation/native";
+
+import { signOut } from "firebase/auth";
 
 const UserProfileScreen = () => {
   const [loggedInUserEmail, setLoggedInUserEmail] = useState("");
@@ -123,6 +127,27 @@ const UserProfileScreen = () => {
   const [selectedYouTube, setSelectedYouTube] = useState("");
   const [selectedDiscord, setSelectedDiscord] = useState("");
   const [selectedTwitter, setSelectedTwitter] = useState("");
+
+  const navigation = useNavigation();
+
+  const handleLogout = () => {
+    // Call the signOut function to log the user out
+    signOut(auth)
+      .then(() => {
+        // Logout successful
+        console.log("User logged out successfully.");
+        navigation.dispatch(
+          CommonActions.reset({
+            index: 0,
+            routes: [{ name: "Login" }],
+          })
+        );
+      })
+      .catch((error) => {
+        // Handle logout error
+        console.error("Logout failed:", error);
+      });
+  };
 
   useEffect(() => {
     // Fetch the user's authentication state
@@ -357,6 +382,9 @@ const UserProfileScreen = () => {
               <Text style={styles.text}>Discord: {socialMedia.discord}</Text>
               <Text style={styles.text}>Twitter: {socialMedia.twitter}</Text>
               <Image source={require("../../assets/BlueLine.png")} />
+              <TouchableOpacity onPress={handleLogout} style={styles.button}>
+                <Text style={styles.buttonText}>Logout</Text>
+              </TouchableOpacity>
             </>
           )}
         </View>
@@ -421,6 +449,19 @@ const styles = StyleSheet.create({
   },
   scrollContainer: {
     flexGrow: 1,
+  },
+  button: {
+    backgroundColor: "#0782F9",
+    width: "60%",
+    padding: 15,
+    borderRadius: 10,
+    marginTop: 20,
+  },
+  buttonText: {
+    color: "white",
+    fontWeight: "700",
+    fontSize: 16,
+    textAlign: "center",
   },
 });
 

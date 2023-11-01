@@ -121,6 +121,9 @@ const MessageScreen = ({ route }) => {
               />
             )}
           </TouchableOpacity>
+          {messagedUser && (
+            <Text style={styles.usernameText}>{messagedUser.username}</Text>
+          )}
         </View>
 
         {/* Chat messages */}
@@ -239,6 +242,11 @@ const styles = StyleSheet.create({
     resizeMode: "cover",
     width: "100%",
     height: "100%",
+  },
+
+  usernameText: {
+    marginBottom: 8,
+    color: "white",
   },
 });
 
