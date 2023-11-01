@@ -3,15 +3,13 @@
     "version": ">= 5.4.0"
   },
   "build": {
-    "android": {
-      "buildType": "apk",
-      "gradleCommand": ":app:assembleRelease"
-    },
     "development": {
+      "android": {
+        "buildType": "apk",
+        "gradleCommand": ":app:assembleRelease"
+      },
       "developmentClient": true,
       "distribution": "internal"
-      
-      
     },
     "preview": {
       "distribution": "internal"
