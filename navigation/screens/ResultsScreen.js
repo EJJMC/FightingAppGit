@@ -12,8 +12,6 @@ import { Avatar } from "react-native-elements";
 import bgImage from "../../assets/SearchBackground.png";
 import { Ionicons } from "@expo/vector-icons";
 
-import YouTubeIframe from "react-native-youtube-iframe";
-
 const ResultsScreen = ({ route, navigation }) => {
   const { user } = route.params;
 
