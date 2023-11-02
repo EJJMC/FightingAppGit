@@ -1,4 +1,3 @@
-import React from "react";
 import {
   View,
   Text,
@@ -18,17 +17,6 @@ const ResultsScreen = ({ route, navigation }) => {
   const handleSendMessage = (user) => {
     navigation.navigate("Messages", { user });
   };
-
-  // Function to extract video ID from YouTube URL
-  const extractVideoId = (url) => {
-    const match = url.match(
-      /(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?feature=player_embedded&v=))([^&\n?#]+)/
-    );
-    return match && match[1];
-  };
-
-  // Extract video ID from user.youtubeVideo
-  const videoId = user.youtubeVideo ? extractVideoId(user.youtubeVideo) : null;
 
   return (
     <ImageBackground source={bgImage} style={styles.backgroundImage}>
@@ -75,21 +63,6 @@ const ResultsScreen = ({ route, navigation }) => {
               )
             )}
           </View>
-
-          {/* {videoId && (
-            <YouTubeIframe
-              videoId={videoId}
-              height={200}
-              width={300}
-              play={false}
-              onChangeState={(event) => {
-                if (event === "ended") {
-                  // Video ended
-                  console.log("Video ended");
-                }
-              }}
-            />
-          )} */}
 
           <Image source={require("../../assets/Line.png")} />
         </View>
@@ -138,11 +111,7 @@ const styles = StyleSheet.create({
   avatar: {
     marginBottom: 20,
   },
-  webview: {
-    width: 300,
-    height: 200,
-    marginVertical: 10,
-  },
+
   backgroundImage: {
     flex: 1,
     resizeMode: "cover",

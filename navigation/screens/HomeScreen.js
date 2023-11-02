@@ -1,19 +1,3 @@
-// import * as React from "react";
-// import { View, Text } from "react-native";
-
-// export default function HomeScreen({ navigation }) {
-//   return (
-//     <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-//       <Text
-//         onPress={() => alert('This is the "Home" screen.')}
-//         style={{ fontSize: 26, fontWeight: "bold" }}
-//       >
-//         Home Screen
-//       </Text>
-//     </View>
-//   );
-// }
-
 import {
   View,
   Text,
@@ -23,7 +7,7 @@ import {
   ScrollView,
   TouchableOpacity,
 } from "react-native";
-import React from "react";
+
 import bgImage from "../../assets/blue.png";
 import { auth } from "../../firebase";
 import { signOut } from "firebase/auth";
@@ -37,12 +21,11 @@ const HomeScreen = () => {
     signOut(auth)
       .then(() => {
         // Logout successful
-        console.log("User logged out successfully.");
+
         navigation.navigate("Login");
       })
       .catch((error) => {
         // Handle logout error
-        console.error("Logout failed:", error);
       });
   };
 

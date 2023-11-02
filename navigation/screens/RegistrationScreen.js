@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import {
   KeyboardAvoidingView,
   StyleSheet,
@@ -64,17 +64,13 @@ const RegistrationScreen = () => {
 
         setDoc(userDocRef, userData)
           .then(() => {
-            console.log("User registered:", user.email);
-            console.log("UID:", uid);
             navigation.navigate(homeName);
           })
           .catch((error) => {
-            console.error("Registration failed:", error);
             alert(error.message);
           });
       })
       .catch((error) => {
-        console.error("Registration error:", error);
         alert(error.message);
       });
   };

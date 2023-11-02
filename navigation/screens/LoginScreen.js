@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   KeyboardAvoidingView,
   StyleSheet,
@@ -13,7 +13,7 @@ import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
 } from "firebase/auth";
-import { collection, addDoc, doc, setDoc } from "firebase/firestore";
+import { doc, setDoc } from "firebase/firestore";
 import { useNavigation } from "@react-navigation/native";
 import bgImage from "../../assets/blue.png";
 
@@ -50,11 +50,8 @@ const LoginScreen = () => {
 
         // Set the user data in Firestore with the specified document ID
         setDoc(userDocRef, userData)
-          .then(() => {
-            console.log("User registered:", user.email);
-          })
+          .then(() => {})
           .catch((error) => {
-            console.error("Registration failed:", error);
             alert(error.message);
           });
       })
@@ -65,7 +62,6 @@ const LoginScreen = () => {
     signInWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
         const user = userCredential.user;
-        console.log("Logged in with:", user.email);
 
         // Store the logged-in user's email in the state
         setEmail(user.email);
@@ -73,7 +69,6 @@ const LoginScreen = () => {
         navigation.navigate("Home");
       })
       .catch((error) => {
-        console.error("Login failed:", error);
         alert(error.message);
       });
   };

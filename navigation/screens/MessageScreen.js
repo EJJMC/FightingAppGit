@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -45,11 +45,8 @@ const MessageScreen = ({ route }) => {
         timestamp: serverTimestamp(),
       });
 
-      console.log("Message sent successfully!");
       setMessage(""); // Clear the message input field
-    } catch (error) {
-      console.error("Error sending message:", error);
-    }
+    } catch (error) {}
   };
 
   // Function to navigate to the user's profile
@@ -93,11 +90,8 @@ const MessageScreen = ({ route }) => {
         if (messagedUserDoc.exists()) {
           setMessagedUser(messagedUserDoc.data());
         } else {
-          console.error("Messaged user not found.");
         }
-      } catch (error) {
-        console.error("Error fetching messaged user data:", error);
-      }
+      } catch (error) {}
     };
 
     fetchMessagedUserData();

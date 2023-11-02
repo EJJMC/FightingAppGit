@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { View, StyleSheet, Image, ImageBackground } from "react-native";
 import { WebView } from "react-native-webview";
 import Onboarding from "react-native-onboarding-swiper";
@@ -82,13 +82,13 @@ const styles = StyleSheet.create({
   },
   imageBackground: {
     flex: 1,
-    resizeMode: "cover", // or "contain" as per your preference
+    resizeMode: "cover",
     width: "100%",
     height: "100%",
   },
   imageStyle: {
-    width: 400, // Adjust the width to your preference
-    height: 300, // Adjust the height to your preference
+    width: 400,
+    height: 300,
     resizeMode: "contain",
   },
 });

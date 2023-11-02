@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -73,9 +73,7 @@ const UserListScreen = () => {
         });
 
         setUsersWithLastMessages(usersWithMessages);
-      } catch (error) {
-        console.error("Error fetching user data:", error);
-      }
+      } catch (error) {}
     };
 
     fetchUsersWithLastMessages();
@@ -146,7 +144,6 @@ const styles = StyleSheet.create({
     padding: 8,
     borderWidth: 3,
     borderColor: "purple",
-    borderRadius: 8,
     alignItems: "center",
     backgroundColor: "#000000",
   },
